@@ -93,5 +93,5 @@ async def on_message(message):
       await message.channel.send(no_result_message)
 
 
-client.run('TOKEN')
+client.run(TOKEN)
 
