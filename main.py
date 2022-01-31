@@ -34,9 +34,9 @@ def prettify_player(data):
 
 client = discord.Client()
 
-hello_message = '''Hello! I am Mysterious Stranger and I can provide information about explorers and tribes of Lost Vault RPG.\nType !seekhelp for commands'''
-no_result_message = '''The search yielded no results. Check if the name is spelled correctly'''
-help_message = '''!seekplayer {Name} to search player information\n!seektribe {Tribe} to search tribe information\nFor a successful result name of a tribe or a player must contain nothing but numbers and letters of the English alphabet (the space  is also OK)\nIf the name contains non-standard characters, you should check under which name you are recorded in the game database.\nTo do this, in the game, in the tribe or player information window, find the share button and click on the link. Your name in the database will be in the address bar after /player/ or /guild/ and may look like user-01 or guild-01'''
+hello_message = '''\nHello! I am Mysterious Stranger and I can provide information about explorers and tribes of Lost Vault RPG.\nType !seekhelp for commands\n'''
+no_result_message = '''\nThe search yielded no results. Check if the name is spelled correctly\n'''
+help_message = '''\n!seekplayer {Name} to search player information\n!seektribe {Tribe} to search tribe information\nFor a successful result name of a tribe or a player must contain nothing but numbers and letters of the English alphabet (the space  is also OK)\nIf the name contains non-standard characters, you should check under which name you are recorded in the game database.\nTo do this, in the game, in the tribe or player information window, find the share button and click on the link. Your name in the database will be in the address bar after /player/ or /guild/ and may look like user-01 or guild-01\n'''
 
 tribe_order = ['TRIBE', 'LVL', 'Rank', 'MEMBERS', 'REACTOR', 'Fame', 'Power']
 #player_order = ['NAME','TRIBE','CLASS','STR','AGI','END','INT','LCK','LVL','Rank','Fame','Power','Quests','Explores','Monsters','Caravan','Vault','Survival']
