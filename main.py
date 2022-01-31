@@ -34,8 +34,9 @@ def prettify_player(data):
 
 client = discord.Client()
 
-hello_message = '''Hello there!'''
-no_result_message = '''no results'''
+hello_message = '''Hello! I am Mysterious Stranger and I can provide information about explorers and tribes of Lost Vault RPG.\nType !seekhelp for commands'''
+no_result_message = '''The search yielded no results. Check if the name is spelled correctly'''
+help_message = '''!seekplayer {Name} to search player information\n!seektribe {Tribe} to search tribe information\nFor a successful result name of a tribe or a player must contain nothing but numbers and letters of the English alphabet (the space  is also OK)\nIf the name contains non-standard characters, you should check under which name you are recorded in the game database.\nTo do this, in the game, in the tribe or player information window, find the share button and click on the link. Your name in the database will be in the address bar after /player/ or /guild/ and may look like user-01 or guild-01'''
 
 tribe_order = ['TRIBE', 'LVL', 'Rank', 'MEMBERS', 'REACTOR', 'Fame', 'Power']
 #player_order = ['NAME','TRIBE','CLASS','STR','AGI','END','INT','LCK','LVL','Rank','Fame','Power','Quests','Explores','Monsters','Caravan','Vault','Survival']
@@ -44,7 +45,7 @@ player_order = ['NAME','TRIBE','CLASS','LVL','Rank','STR','AGI','END','INT','LCK
 # instantiate LostVault class from search_lv_api.py
 lv_api = search_lv_api.LostVault()
 
-client = commands.Bot(command_prefix = '$') #put your own prefix here
+client = commands.Bot(command_prefix = '!') #put your own prefix here
 TOKEN = os.getenv("DISCORD-TOKEN")
 
 @client.event
@@ -56,14 +57,6 @@ async def on_ready():
 async def ping(ctx):
     await ctx.send("pong!") #simple command so that when you type "!ping" the bot will respond with "pong!"
 
-async def kick(ctx, member : discord.Member):
-    try:
-        await member.kick(reason=None)
-        await ctx.send("kicked "+member.mention) #simple kick command to demonstrate how to get and use member mentions
-    except:
-        await ctx.send("bot does not have the kick members permission!")
-
-
 @client.event
 async def on_message(message): 
   if message.author == client.user:
@@ -72,10 +65,13 @@ async def on_message(message):
   message_content = message.content.lower()  
 
   
-  if message.content.startswith(f'$hello'):
+  if message.content.startswith(f'!hello'):
     await message.channel.send(hello_message)
-  
-  if f'$tribe' in message_content:
+
+  if message.content.startswith(f'!seekhelp'):
+    await message.channel.send(help_message)
+
+  if f'!seektribe' in message_content:
     key_words, search_words = lv_api.key_words_search_words(message_content)
     result = lv_api.search_tribe(key_words) 
     if len(result) > 1:
@@ -84,7 +80,7 @@ async def on_message(message):
     else:
       await message.channel.send(no_result_message)
 
-  if f'$player' in message_content:
+  if f'!seekplayer' in message_content:
     key_words, search_words = lv_api.key_words_search_words(message_content)
     result = lv_api.search_player(key_words) 
     if len(result) > 1:
