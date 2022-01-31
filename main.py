@@ -44,7 +44,7 @@ player_order = ['NAME','TRIBE','CLASS','STR','AGI','END','INT','LCK','LVL','Rank
 lv_api = search_lv_api.LostVault()
 
 client = commands.Bot(command_prefix = '$') #put your own prefix here
-TOKEN = os.getenv("DISCORD_TOKEN")
+TOKEN = os.getenv("DISCORD-TOKEN")
 
 @client.event
 async def on_ready():
