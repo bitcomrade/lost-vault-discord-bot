@@ -92,6 +92,6 @@ async def on_message(message):
     else:
       await message.channel.send(no_result_message)
 
-
-client.run(TOKEN)
+if __name__ == "__main__":
+  client.run(TOKEN)
 
