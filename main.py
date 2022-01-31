@@ -15,7 +15,7 @@ def prettify_tribe(raw_data):
   for value in range(1,4):
     label_1 = tribe_order[value]
     label_2 = tribe_order[value+3]
-    stat_table.append((label_1,': ',raw_data.get(label_1),label_2,': ',raw_data.get(label_2)))
+    stat_table.append((label_1,':',raw_data.get(label_1),label_2,':',raw_data.get(label_2)))
   table = tabulate(stat_table)
   result = line_1 + table + '\n```'
   return result
@@ -23,11 +23,11 @@ def prettify_tribe(raw_data):
 def prettify_player(data):
   line_1 = '```\nNAME: ' + data.get('NAME') + '\nCLASS: ' + data.get('CLASS') + '\nTRIBE: ' + data.get('TRIBE') + '\n'
   stat_table = []
-  for value in range(3,8):
+  for value in range(3,11):
     label_1 = player_order[value]
-    label_2 = player_order[value+5]
-    label_3 = player_order[value+10]
-    stat_table.append((label_1, ': ',data.get(label_1),label_2,': ',data.get(label_2),label_3, ': ', data.get(label_3)))
+    label_2 = player_order[value+8]
+    #label_3 = player_order[value+10]
+    stat_table.append((label_1, ':',data.get(label_1),label_2,':',data.get(label_2)))
   table = tabulate(stat_table)
   result = line_1 + table + '\n```'
   return result
@@ -38,7 +38,8 @@ hello_message = '''Hello there!'''
 no_result_message = '''no results'''
 
 tribe_order = ['TRIBE', 'LVL', 'Rank', 'MEMBERS', 'REACTOR', 'Fame', 'Power']
-player_order = ['NAME','TRIBE','CLASS','STR','AGI','END','INT','LCK','LVL','Rank','Fame','Power','Quests','Explores','Monsters','Caravan','Vault','Survival']
+#player_order = ['NAME','TRIBE','CLASS','STR','AGI','END','INT','LCK','LVL','Rank','Fame','Power','Quests','Explores','Monsters','Caravan','Vault','Survival']
+player_order = ['NAME','TRIBE','CLASS','LVL','Rank','STR','AGI','END','INT','LCK','','Fame','Power','Quests','Explores','Monsters','Caravan','Vault','Survival']
 
 # instantiate LostVault class from search_lv_api.py
 lv_api = search_lv_api.LostVault()
