@@ -1,6 +1,5 @@
 import discord
 import os
-import time
 import discord.ext
 import search_lv_api
 from discord.utils import get
@@ -15,7 +14,7 @@ def prettify_tribe(raw_data):
   for value in range(1,4):
     label_1 = tribe_order[value]
     label_2 = tribe_order[value+3]
-    stat_table.append((label_1,':',raw_data.get(label_1),label_2,':',raw_data.get(label_2)))
+    stat_table.append((label_1,raw_data.get(label_1),'|',label_2,raw_data.get(label_2)))
   table = tabulate(stat_table)
   result = line_1 + table + '\n```'
   return result
@@ -27,19 +26,18 @@ def prettify_player(data):
     label_1 = player_order[value]
     label_2 = player_order[value+8]
     #label_3 = player_order[value+10]
-    stat_table.append((label_1, ':',data.get(label_1),label_2,':',data.get(label_2)))
+    stat_table.append((label_1,data.get(label_1),'|',label_2,data.get(label_2)))
   table = tabulate(stat_table)
   result = line_1 + table + '\n```'
   return result
 
 client = discord.Client()
 
-hello_message = '\nHello! I am Mysterious Stranger and I can provide information about explorers and tribes of Lost Vault RPG.\nFor commands type\n```\n!seekhelp\n```'
-no_result_message = '\nThe search yielded no results. Check if the name is spelled correctly\n'
-help_message = '\nFor player information:\n```\n!seekplayer {Name}\n```\nTo search tribe information:\n```\n!seektribe {Tribe}\n```\nFor a successful result name of a tribe or a player must contain nothing but numbers and letters of the English alphabet (the space  is also OK)\nIf the name contains non-standard characters, you should check under which name you are recorded in the game database.\nTo do this, in the game, in the tribe or player information window, find the ```share``` button and click on the link. Your name in the database will be in the address bar after ```/player/``` or ```/guild/``` and may look like ```user-01``` or ```guild-01```\n'
+hello_message = '\nHello! I am Lost Vault Seeker and I can provide information about players and tribes of Lost Vault RPG.\nFor commands type\n```\n!seekhelp\n```'
+no_result_message = '\nThe search yielded no results. Check if the name is spelled correctly\n```!seekhelp``` if you need it.\n'
+help_message = '\nFor player information:\n```\n!seekplayer {Name}\n```\nTo search for tribe information:\n```\n!seektribe {Tribe}\n```\nFor a successful result name of a tribe or a player must contain nothing but numbers and letters of the English alphabet (the space  is also OK)\nIf the name contains non-standard characters, you should check under which name you are recorded in the game database.\nTo do this, in the game, in the tribe or player information window, find the ```SHARE``` button and click on the link. Your name in the database will be in the address bar after ```/players/``` or ```/guilds/``` and may look like ```user-1``` or ```guild-11```\n'
 
 tribe_order = ['TRIBE', 'LVL', 'Rank', 'MEMBERS', 'REACTOR', 'Fame', 'Power']
-#player_order = ['NAME','TRIBE','CLASS','STR','AGI','END','INT','LCK','LVL','Rank','Fame','Power','Quests','Explores','Monsters','Caravan','Vault','Survival']
 player_order = ['NAME','TRIBE','CLASS','LVL','Rank','STR','AGI','END','INT','LCK','','Fame','Power','Quests','Explores','Monsters','Caravan','Vault','Survival']
 
 # instantiate LostVault class from search_lv_api.py
@@ -72,8 +70,8 @@ async def on_message(message):
     await message.channel.send(help_message)
 
   if f'!seektribe' in message_content:
-    key_words, search_words = lv_api.key_words_search_words(message_content)
-    result = lv_api.search_tribe(key_words) 
+    search_query = lv_api.get_search_query(message_content)
+    result = lv_api.search_tribe(search_query) 
     if len(result) > 1:
       output = prettify_tribe(result)
       await message.channel.send(output)
@@ -81,8 +79,8 @@ async def on_message(message):
       await message.channel.send(no_result_message)
 
   if f'!seekplayer' in message_content:
-    key_words, search_words = lv_api.key_words_search_words(message_content)
-    result = lv_api.search_player(key_words) 
+    search_query = lv_api.get_search_query(message_content)
+    result = lv_api.search_player(search_query) 
     if len(result) > 1:
       output = prettify_player(result)
       await message.channel.send(output)
@@ -91,4 +89,3 @@ async def on_message(message):
 
 if __name__ == "__main__":
   client.run(TOKEN)
-
