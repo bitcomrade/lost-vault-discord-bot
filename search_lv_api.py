@@ -36,6 +36,8 @@ class LostVault:
     for header in player_header:
       if header.strip():
         header_list.append(header.strip('[ ]'))
+    if len(header_list)<3:
+      header_list.insert(1, 'None')
     player_result = {'TRIBE':header_list[0], 'NAME': header_list[1], 'CLASS': header_list[2]}
     values = soup.findAll("div", {"class":"value"})
     labels = soup.findAll("div", {"class":"label"})
