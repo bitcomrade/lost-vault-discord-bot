@@ -15,7 +15,7 @@ Available commands:
 !seekplayer {Name} - searches for a player
 !seektribe {Name} - searches for a tribe
 ```
-Bot is up and running on herokuapp server with bot tokken placed in herokuapp config vars. to run on other servers, you may need to edit line 48 in ```main.py``` and also create an ```.env``` file.
+Bot is up and running on herokuapp server with bot token placed in herokuapp config vars. to run on other servers, you may need to edit line 48 in ```main.py``` and also create an ```.env``` file.
 
 ----
 
