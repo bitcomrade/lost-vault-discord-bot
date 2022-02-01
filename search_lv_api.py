@@ -14,7 +14,7 @@ class LostVault:
 
   def search_tribe(self, keywords):
     response = requests.get(self.tribe_url+keywords, headers = self.headers)
-    if response.status_code = 404:
+    if response.status_code == 404:
       return []
     content = response.content
     soup = BeautifulSoup(content, 'html.parser')
@@ -32,7 +32,7 @@ class LostVault:
   def search_player(self, keywords):
     header_list= []
     response = requests.get(self.player_url+keywords, headers = self.headers)
-    if response.status_code = 404:
+    if response.status_code == 404:
       return []
     content = response.content
     soup = BeautifulSoup(content, 'html.parser')
