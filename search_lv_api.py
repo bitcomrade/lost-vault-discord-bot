@@ -7,11 +7,10 @@ class LostVault:
         self.tribe_url = 'https://api.lost-vault.com/guilds/'
         self.player_url = 'https://api.lost-vault.com/players/'
 
-  def key_words_search_words(self, user_message):
+  def get_search_query(self, user_message):
     words = user_message.split()[1:]
-    keywords = '-'.join(words)
-    search_words = ' '.join(words)
-    return keywords, search_words
+    found_query = '-'.join(words)
+    return found_query
 
   def search_tribe(self, keywords):
     response = requests.get(self.tribe_url+keywords, headers = self.headers)
