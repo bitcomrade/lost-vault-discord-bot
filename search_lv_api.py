@@ -35,7 +35,8 @@ class LostVault:
         """
         # words = user_message.split()[1:]
         # found_query = '-'.join(words)
-        return user_message.strip().replace(' ', '-')
+        search_query = user_message.strip().lower().replace(' ', '-')
+        return search_query
 
     def fetch_tribe(self, keywords):
         """Retrieves tribe info from the Lost Vault API
