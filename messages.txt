@@ -1,0 +1,18 @@
+3 messages total:
+1 - Hello message
+2 - No result message
+3 - Help message
+----
+IMPORTANT:
+Because of some strange bug (can't figure it out yet), new line characters don't work as intend in the bot output.
+For now, replace '\n' with '&&' it will be automatically changed to new line characters.
+----
+English
+&&Hello! I am Lost Vault Seeker and I can provide information about players and tribes of Lost Vault RPG.&&For commands type&&```&&!seekhelp&&```
+&&The search yielded no results. Check if the name is spelled correctly&&```!seekhelp``` if you need it.&&
+&&For player information:&&```&&!seekplayer {Name}&&```&&To search for tribe information:&&```&&!seektribe {Tribe}&&```&&For a successful result name of a tribe or a player must contain nothing but numbers and letters of the English alphabet (the space  is also OK)&&If the name contains non-standard characters, you should check under which name you are recorded in the game database.&&To do this, in the game, in the tribe or player information window, find the **SHARE** button and click on the link. Your name in the database will be in the address bar after **/players/** or **/guilds/** and may look like **user-1** or **guild-1**&&
+----
+Russian
+&&Здравствуйте! Я - Lost Vault Seeker и могу предоставить информацию об игроках и племенах мобильной игры Lost Vault.&&Для команд введите&&```&&!seekhelp&&```
+&&Поиск не дал результатов. Проверьте, правильно ли написано имя.&&```&&!seekhelp&&```если нужна моя помощь.&&
+&&Для получения информации об игроке:&&```&&!seekplayer {Имя}&&```&&Для поиска информации о племени:&&```&&!seektribe {Племя}&&```&&Для успешного результата имя племени или игрока должно содержать только цифры и/или буквы английского алфавита (пробел тоже не проблема)&&Если имя содержит нестандартные символы, следует проверить, под каким именем вы записаны в базе данных игры. &&Для этого в игре, в окне информации о племени или игроке, найдите кнопку **SHARE** и нажмите на нее. Ваше имя в базе данных будет находиться в адресной строке после **/players/** или **/guilds/** и может выглядеть как **user-1** или **guild-1**&&

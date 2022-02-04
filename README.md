@@ -11,11 +11,10 @@ Available commands:
 ```
 !hello - greetings message
 !seekhelp - help and instructions
-!помоги - help and instructions in Russian
 !seekplayer {Name} - searches for a player
 !seektribe {Name} - searches for a tribe
 ```
-Bot is up and running on herokuapp server with bot token placed in herokuapp config vars. to run on other servers, you may need to edit line 48 in ```main.py``` and also create an ```.env``` file.
+Bot is up and running on herokuapp server with bot token placed in herokuapp config vars. to run on other servers, you may need to edit line 11 in ```bot.py``` and also create an ```.env``` file.
 
 ----
 
@@ -30,8 +29,7 @@ https://lost-vault.com/
 ```
 !hello - приветствие
 !seekhelp - помощь и инструкции
-!помоги - помощь и инструкции на русском языке
 !seekplayer {Имя} - поиск игрока
 !seektribe {Имя} - поиск племени
 ```
-Бот запущен на сервере herokuapp с токеном бота, размещенным в конфигах herokuapp. Для запуска на других серверах, возможно, потребуется отредактировать строку 48 в ``main.py``, а также создать файл ``.env``.
+Бот запущен на сервере herokuapp с токеном бота, размещенным в конфигах herokuapp. Для запуска на других серверах, возможно, потребуется отредактировать строку 11 в ``bot.py``, а также создать файл ``.env``.
