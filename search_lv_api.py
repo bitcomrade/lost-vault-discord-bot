@@ -26,8 +26,7 @@ class LostVault:
              'Chrome/88.0.4324.150 Safari/537.3'
              )
             }
-        self.tribe_url = 'https://api.lost-vault.com/guilds/'
-        self.player_url = 'https://api.lost-vault.com/players/'
+        self.api_url = 'https://api.lost-vault.com/'
  
     def get_search_query(self, user_message):
         """modifies user input to match api format; 
@@ -38,7 +37,65 @@ class LostVault:
         search_query = user_message.strip().lower().replace(' ', '-')
         return search_query
 
-    def fetch_tribe(self, keywords):
+    def fetch_request(self, name, query_kind):
+        """Sends request to API, checks that url is valid 
+        and returns a bs4 soup
+
+        Args:
+            name (string): user's search query
+            query_kind (string): to distinguish  between guild and player URL
+        """        
+        search_query = self.get_search_query(name)
+        query_url = f"{self.api_url}{query_kind}/{search_query}/"
+        response = requests.get(query_url, headers = self.headers)
+        if response.status_code == 404:
+            return None
+        content = response.content
+        soup = BeautifulSoup(content, 'html.parser')
+        return soup
+    
+    def fill_header(self, data_soup):
+        """
+        Fill the beginning of the search result. Separate function because 
+        names use different tag from the rest of the parameters
+        """        
+        headers = data_soup.find("h1").get_text().splitlines()
+        header_list = [
+            header.strip('[ ]') for header in headers if header.strip()
+            ]
+        case = len(header_list)
+        if case == 1: # this is a tribe
+            return {'TRIBE': header_list[0]}
+        if case == 2: # this is a player without a tribe
+            header_list.insert(0, 'None')
+        result = {
+            'TRIBE':header_list[0], 
+            'NAME': header_list[1], 
+            'CLASS': header_list[2]
+            }
+        return result              
+    
+    def fill_info(self, info_draft, info_source):
+        """Fills the rest of the information
+
+        Args:
+            info_draft: [dictionary with the header filled in]
+            info_source: [bs4 soup with data]
+
+        Returns:
+            [dict]: [filled search result with all information]
+        """        
+        # Get information
+        labels, values = parse_info(info_source)
+        labels_list = [get_label(label) for label in labels]
+        values_list = [get_value(value) for value in values]
+        # Fill entry in dictionary
+        for label in labels_list:
+            info_draft.update({label:values_list[labels_list.index(label)]})
+        return info_draft
+
+        
+    def get_tribe(self, keywords):
         """Retrieves tribe info from the Lost Vault API
 
         Args:
@@ -47,27 +104,16 @@ class LostVault:
         Returns:
             dict: dictionary, containing information about tribe
         """    
-        response = requests.get(
-            self.tribe_url+keywords, 
-            headers = self.headers
-            )
-        if response.status_code == 404:
-            return []
-        content = response.content
-        soup = BeautifulSoup(content, 'html.parser')
+        tribe_soup = self.fetch_request(keywords, 'guilds')
+        if(not(tribe_soup)):
+            return tribe_soup
         # Get name
-        tribe_name = soup.find("h1").get_text().strip()
-        tribe_result = {"TRIBE": tribe_name}
-        # Get tribe information
-        labels, values = parse_info(soup)
-        labels_list = [get_label(label) for label in labels]
-        values_list = [get_value(value) for value in values]
-        # Fill tribe entry in dictionary
-        for label in labels_list:
-            tribe_result.update({label:values_list[labels_list.index(label)]})
-        return tribe_result
+        tribe_result = self.fill_header(tribe_soup)
+        # Fill tribe information
+        result = self.fill_info(tribe_result, tribe_soup)
+        return result
       
-    def fetch_player(self, keywords):
+    def get_player(self, keywords):
         """Retrieves player info from the Lost Vault API
 
         Args:
@@ -76,35 +122,12 @@ class LostVault:
         Returns:
             dict: dictionary, containing information about player
         """  
-        header_list= []
-        response = requests.get(
-            self.player_url+keywords, 
-            headers = self.headers
-            )
-        if response.status_code == 404:
-            return []
-        content = response.content
-        soup = BeautifulSoup(content, 'html.parser')
+        player_soup = self.fetch_request(keywords, 'players')
+        if(not(player_soup)):
+            return player_soup
         # Get name, class and a tribe of the player
-        player_header = soup.find("h1").get_text().splitlines()
-        for header in player_header:
-            if header.strip():
-              header_list.append(header.strip('[ ]'))
-        if len(header_list)<3:
-            header_list.insert(0, 'None')
-        player_result = {
-            'TRIBE':header_list[0], 
-            'NAME': header_list[1], 
-            'CLASS': header_list[2]
-            }
+        player_result = self.fill_header(player_soup)
         # Get player information
-        labels, values = parse_info(soup)
-        labels_list = [get_label(label) for label in labels]
-        values_list = [get_value(value) for value in values]
-        # Fill player information in the dictionary
-        for label in labels_list:
-            player_result.update(
-                {label:values_list[labels_list.index(label)]}
-                )
-        return player_result
+        result = self.fill_info(player_result, player_soup)
+        return result
     
