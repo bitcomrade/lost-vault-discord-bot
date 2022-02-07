@@ -4,12 +4,24 @@ from nextcord import Interaction
 from nextcord.ext import commands
 import process_data
 
+
 class BasicCommmands(commands.Cog):
     """A couple of simple commands."""
 
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
+
+    @commands.Cog.listener()
+    async def on_ready(self):
+        process_data.msg.get_message_list()
+        
+    @commands.command(name='language')
+    #@commands.has_role("Moderator")
+    async def set_language(self, ctx: commands.Context, *, text: str):
+        process_data.msg.messages = process_data.msg.get_message_list(text)
+        await ctx.send(process_data.msg.hello_message())
+        
     @commands.command(name="ping")
     @commands.cooldown(rate=1,per=3)
     async def ping(self, ctx: commands.Context):
@@ -25,12 +37,12 @@ class BasicCommmands(commands.Cog):
     @commands.command(name="hello")
     async def send_hello_msg(self, ctx: commands.Context):
         """Replies to hello message with basic information"""
-        await ctx.send(process_data.hello_message())    
+        await ctx.send(process_data.msg.hello_message())    
       
     @commands.command(name="seekhelp")
     async def send_help_msg(self, ctx: commands.Context):
         """Replies with basic instructions and commands"""
-        await ctx.send(process_data.help_message())
+        await ctx.send(process_data.msg.help_message())
         
     @commands.command(name="player")
     async def send_player_info(self, ctx: commands.Context, *, text: str):
