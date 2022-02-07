@@ -1,7 +1,8 @@
 import time
+from datetime import datetime
 import nextcord
 from nextcord import Interaction
-from nextcord.ext import commands
+from nextcord.ext import commands, tasks
 import process_data
 
 
@@ -15,6 +16,24 @@ class BasicCommmands(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         process_data.msg.get_message_list()
+        
+    @tasks.loop(minutes=20)
+    async def on_ready(self):
+        time_now = datetime.now()
+        time_passed = round(
+            (time_now - process_data.db.last_upd).total_seconds()/60
+        )
+        if time_passed > 60:
+            process_data.update_db()
+            
+    @commands.command(name='dbupdate')
+    @commands.has_role("Moderator")
+    async def force_db_update(self):
+        process_data.update_db()
+        
+    @commands.command(name='vs')
+    async def find_opponents(self, ctx: commands.Context, *, text: str):
+        await ctx.send(process_data.get_vs(text))
         
     @commands.command(name='language')
     #@commands.has_role("Moderator")

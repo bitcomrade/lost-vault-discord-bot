@@ -1,6 +1,7 @@
 from unittest.mock import DEFAULT
 from tabulate import tabulate
 import search_lv_api
+import db_handle
 
 
 TRIBE_ORDER = ['tribe', 'lvl', 'rank', 'members', 'reactor', 'fame', 'power']
@@ -70,8 +71,12 @@ class BotMessages:
 
 # instantiate LostVault class from search_lv_api.py
 vault = search_lv_api.LostVault()
+
 # nstantiate BotMessages class
 msg = BotMessages()
+
+# nstantiate Database Handler
+db = db_handle.DBHandler()
 
 def prettify_tribe(data):
     """Generates formatted table from the tribe stats using tabulate module
@@ -121,7 +126,7 @@ def prettify_player(data):
     result = line_1 + table + '\n```'
     return result
 
-def prettify_vs(obj_type, data_1, data_2):
+def prettify_compare(obj_type, data_1, data_2):
     if obj_type == 'players':
         order = PLAYER_ORDER
     else: order = TRIBE_ORDER
@@ -150,6 +155,22 @@ def prettify_vs(obj_type, data_1, data_2):
     result = f"\n```\n{table}\n```\n"
     return result
 
+def prettify_vs(tribe, opponents):
+    header = tabulate(tribe, headers='keys', showindex=False)
+    table_len = len(header.split('\n')[0])
+    insert = ' ' if table_len % 2 else ''
+    sword_len = (table_len - len(insert))/2
+    blade_len = round((sword_len - 3)*2/3)
+    hilt_len = sword_len-blade_len-3
+    swords = (
+        '+' + '-'*hilt_len + '}' + '='*blade_len + '>' + insert +
+        '<' + '='*blade_len + '{' + '-'*hilt_len + '+'
+        )
+    opps = tabulate(opponents, showindex=False)
+    result = f"\n```\n{header}\n{swords}\n{opps}\n```\n"
+    return result
+              
+    
 def tribe_info(name):
     """Returns tribe information or no result message
 
@@ -189,10 +210,18 @@ def compare(obj_type, objects):
         return msg.no_result_message()
     # make comparison list
     # prettify output
-    result = prettify_vs(obj_type, compare_1, compare_2)
+    result = prettify_compare(obj_type, compare_1, compare_2)
     # return output
     return result
 
+def get_vs(tribe_id):
+    result = db.get_vs(tribe_id)
+    output = prettify_vs(result) if result else msg.no_result_message()
+    
+def update_db():
+    df = db.df_from_dict()
+    db.df_to_sql(df)
+    return
 
 def get_tribes(source_txt):
     # return tribes list

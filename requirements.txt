@@ -3,3 +3,7 @@ python-dotenv
 requests
 bs4
 tabulate
+datetime
+pandas
+sqlalchemy
+tqdm
