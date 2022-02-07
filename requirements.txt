@@ -5,5 +5,6 @@ bs4
 tabulate
 datetime
 pandas
+psycopg2
 sqlalchemy
 tqdm
