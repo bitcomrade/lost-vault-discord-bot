@@ -28,7 +28,7 @@ class BasicCommmands(commands.Cog):
             
     @commands.command(name='dbupdate')
     @commands.has_role("Moderator")
-    async def force_db_update(self):
+    async def force_db_update(self, ctx: commands.Context):
         process_data.update_db()
         
     @commands.command(name='vs')
