@@ -10,6 +10,7 @@ My bot listens for keywords in the discord channel and sends a request to API si
 Available commands:
 ```
 !hello - greetings message
+!language en / !language ru - change messages language to English/Russian
 !seekhelp - help and instructions
 !player {Name} - searches for a player
 !tribe {Name} - searches for a tribe
@@ -30,6 +31,7 @@ https://lost-vault.com/
 Доступные команды:
 ```
 !hello - приветствие
+!language en / !language ru - сменить язык сообщений на английский/русский
 !seekhelp - помощь и инструкции
 !player {Имя} - поиск игрока
 !tribe {Имя} - поиск племени

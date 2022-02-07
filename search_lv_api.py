@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 
 def get_label(soup_label):
     """returns tribe or player parameter name"""
-    return soup_label.text.strip()
+    return soup_label.text.strip().lower()
 
 def get_value(soup_value):
     """returns tribe or player parameter"""
@@ -65,13 +65,13 @@ class LostVault:
             ]
         case = len(header_list)
         if case == 1: # this is a tribe
-            return {'TRIBE': header_list[0]}
+            return {'tribe': header_list[0]}
         if case == 2: # this is a player without a tribe
-            header_list.insert(0, 'None')
+            header_list.insert(0, 'none')
         result = {
-            'TRIBE':header_list[0], 
-            'NAME': header_list[1], 
-            'CLASS': header_list[2]
+            'tribe':header_list[0], 
+            'name': header_list[1], 
+            'class': header_list[2]
             }
         return result              
     
