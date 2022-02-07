@@ -80,12 +80,12 @@ class DBHandler:
         
     def get_vs(self, tribe_id):
         self.fetch_power = (
-            """SELECT "power" FROM lost_vault_tribes """
+            """SELECT "power" FROM lost-vault-tribes """
             f"""WHERE index = '{tribe_id}'"""
             )
         self.fetch_tribe = (
             """SELECT "rank", "tribe", "lvl", "fame", "power" """
-            f"""FROM lost_vault_tribes WHERE index = '{tribe_id}'"""
+            f"""FROM lost-vault-tribes WHERE index = '{tribe_id}'"""
             )
         engine = create_engine(f"postgresql{self.sql_url[8:]}", echo=False)
         res_power = pd.read_sql(self.fetch_power, con=engine)
@@ -97,7 +97,7 @@ class DBHandler:
         power = int(res_power['Power'])*treshold
         self.fetch_vs = (
             """SELECT "rank", "tribe", "lvl", "fame", "power" """
-            f"""FROM lost_vault_tribes WHERE "power" < {power} """
+            f"""FROM lost-vault-tribes WHERE "power" < {power} """
             """ORDER BY "rank" LIMIT 5"""
             )
         res_vs = pd.read_sql(self.fetch_vs, con=engine)
