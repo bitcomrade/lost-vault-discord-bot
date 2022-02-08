@@ -1,4 +1,3 @@
-from unittest.mock import DEFAULT
 from tabulate import tabulate
 import search_lv_api
 import db_handle
@@ -155,21 +154,6 @@ def prettify_compare(obj_type, data_1, data_2):
     result = f"\n```\n{table}\n```\n"
     return result
 
-def prettify_vs(tribe, opponents):
-    header = tabulate(tribe, headers='keys', showindex=False)
-    table_len = len(header.split('\n')[0])
-    insert = ' ' if table_len % 2 else ''
-    sword_len = (table_len - len(insert))/2
-    blade_len = round((sword_len - 3)*2/3)
-    hilt_len = sword_len-blade_len-3
-    swords = (
-        '+' + '-'*hilt_len + '}' + '='*blade_len + '>' + insert +
-        '<' + '='*blade_len + '{' + '-'*hilt_len + '+'
-        )
-    opps = tabulate(opponents, showindex=False)
-    result = f"\n```\n{header}\n{swords}\n{opps}\n```\n"
-    return result
-              
     
 def tribe_info(name):
     """Returns tribe information or no result message
@@ -214,9 +198,11 @@ def compare(obj_type, objects):
     # return output
     return result
 
-def get_vs(tribe_id):
-    result = db.get_vs(tribe_id)
-    output = prettify_vs(result) if result else msg.no_result_message()
+def get_vs(tribe):
+    tribe_id = vault.get_search_query(tribe)
+    opponents = db.get_vs(tribe_id)
+    output = prettify_vs(opponents) if not(opponents.empty) else msg.no_result_message()
+    return output
     
 def update_db():
     df = db.df_from_dict()
@@ -230,3 +216,24 @@ def get_tribes(source_txt):
 def top_tribes(positions):
     # return list of a top {AMOUNT} tribes
     pass
+
+def prettify_vs(opponents):
+    table = tabulate(opponents, headers='keys', showindex=False)
+    res_list = table.split('\n')
+    table_len = len(max(res_list, key=len))
+    swords = draw_swords(table_len)
+    res_list.insert(3, swords)
+    res_string = '\n'.join(res_list)
+    result = f"\n```\n{res_string}\n```\n"
+    return result
+
+def draw_swords (lenght):
+    insert = ' ' if lenght % 2 else ''
+    sword_len = int((lenght - len(insert))/2)
+    blade_len = int(round((sword_len - 3)*2/3))
+    hilt_len = sword_len-blade_len-3
+    swords = (
+        '+' + '-'*hilt_len + '}' + '='*blade_len + '>' + insert +
+        '<' + '='*blade_len + '{' + '-'*hilt_len + '+'
+        )
+    return swords
