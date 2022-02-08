@@ -5,6 +5,9 @@ import pandas as pd
 from sqlalchemy import create_engine
 from tqdm import tqdm
 import search_lv_api
+#from dotenv import load_dotenv
+
+#load_dotenv()
 
 api_search = search_lv_api.LostVault()
 
@@ -74,34 +77,36 @@ class DBHandler:
     
     def df_to_sql(self, dataframe):
         engine = create_engine(f"postgresql{self.sql_url[8:]}", echo=False)
-        dataframe.to_sql('lost-vault-tribes', con=engine, if_exists='replace')
+        dataframe.to_sql('lvtribes', con=engine, if_exists='replace')
         engine.dispose()
         return
         
     def get_vs(self, tribe_id):
         self.fetch_power = (
-            """SELECT "power" FROM lost-vault-tribes """
+            """SELECT "power" FROM lvtribes """
             f"""WHERE index = '{tribe_id}'"""
             )
         self.fetch_tribe = (
             """SELECT "rank", "tribe", "lvl", "fame", "power" """
-            f"""FROM lost-vault-tribes WHERE index = '{tribe_id}'"""
+            f"""FROM lvtribes WHERE index = '{tribe_id}'"""
             )
         engine = create_engine(f"postgresql{self.sql_url[8:]}", echo=False)
         res_power = pd.read_sql(self.fetch_power, con=engine)
-        if not(res_power):
-            engine.dispose()
-            return None
         res_tribe = pd.read_sql(self.fetch_tribe, con=engine)
-        treshold = 1.10
-        power = int(res_power['Power'])*treshold
+        if res_power.empty:
+            engine.dispose()
+            return res_power
+        treshold = 1.15
+        power = int(res_power['power'])*treshold
         self.fetch_vs = (
             """SELECT "rank", "tribe", "lvl", "fame", "power" """
-            f"""FROM lost-vault-tribes WHERE "power" < {power} """
-            """ORDER BY "rank" LIMIT 5"""
+            f"""FROM lvtribes WHERE "power" < {power} """
+            """ORDER BY "rank" LIMIT 8"""
             )
         res_vs = pd.read_sql(self.fetch_vs, con=engine)
+        vs_exclude = res_vs[~res_vs['tribe'].isin(res_tribe['tribe'])]
+        output = pd.concat([res_tribe, vs_exclude])
         engine.dispose()
-        return res_tribe, res_vs
+        return output
     
 
