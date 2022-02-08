@@ -87,7 +87,7 @@ class DBHandler:
             f"""WHERE index = '{tribe_id}'"""
             )
         self.fetch_tribe = (
-            """SELECT "rank", "tribe", "lvl", "fame", "power" """
+            """SELECT "rank", "tribe", "fame", "power" """
             f"""FROM lvtribes WHERE index = '{tribe_id}'"""
             )
         engine = create_engine(f"postgresql{self.sql_url[8:]}", echo=False)
@@ -99,7 +99,7 @@ class DBHandler:
         treshold = 1.15
         power = int(res_power['power'])*treshold
         self.fetch_vs = (
-            """SELECT "rank", "tribe", "lvl", "fame", "power" """
+            """SELECT "rank", "tribe", "fame", "power" """
             f"""FROM lvtribes WHERE "power" < {power} """
             """ORDER BY "rank" LIMIT 8"""
             )
@@ -108,5 +108,5 @@ class DBHandler:
         output = pd.concat([res_tribe, vs_exclude])
         engine.dispose()
         return output
-    
+        
 
