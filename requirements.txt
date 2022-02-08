@@ -2,7 +2,7 @@ nextcord
 python-dotenv
 requests
 bs4
-tabulate
+tabulate[widechars]
 datetime
 pandas
 psycopg2
