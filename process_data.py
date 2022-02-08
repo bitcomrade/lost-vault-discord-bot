@@ -1,6 +1,7 @@
 from tabulate import tabulate
 import search_lv_api
 import db_handle
+from numerize import numerize
 
 
 TRIBE_ORDER = ['tribe', 'lvl', 'rank', 'members', 'reactor', 'fame', 'power']
@@ -201,7 +202,11 @@ def compare(obj_type, objects):
 def get_vs(tribe):
     tribe_id = vault.get_search_query(tribe)
     opponents = db.get_vs(tribe_id)
-    output = prettify_vs(opponents) if not(opponents.empty) else msg.no_result_message()
+    output = (
+        prettify_vs(opponents) 
+        if not(opponents.empty) 
+        else msg.no_result_message()
+        )
     return output
     
 def update_db():
@@ -209,16 +214,20 @@ def update_db():
     db.df_to_sql(df)
     return
 
-def get_tribes(source_txt):
-    # return tribes list
-    pass
-
-def top_tribes(positions):
-    # return list of a top {AMOUNT} tribes
-    pass
-
 def prettify_vs(opponents):
-    table = tabulate(opponents, headers='keys', showindex=False)
+    opp_list = opponents.values.tolist()
+    for row in opp_list:
+        row[:] = [
+            numerize.numerize(val) 
+            if (type(val) == int) 
+            else val 
+            for val in row
+            ]
+    headers_list = ['RANK', 'TRIBE', 'FAME', 'POWER']
+    table = tabulate(
+        opp_list, headers=headers_list, 
+        colalign=['left','left','left','left'], 
+        disable_numparse=False)
     res_list = table.split('\n')
     table_len = len(max(res_list, key=len))
     swords = draw_swords(table_len)
