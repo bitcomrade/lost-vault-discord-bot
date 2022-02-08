@@ -16,6 +16,7 @@ Available commands:
 !tribe {Name} - searches for a tribe
 !players {Name1} && {Name2} - compares two players
 !tribes {Tribe1} && {Tribe2} - compares two tribes
+!vs {Tribe} - searches opponents for tribe attack
 ```
 Bot is up and running on herokuapp server with bot token placed in herokuapp config vars. to run on other servers, you may need to edit line 11 in ```bot.py``` and also create an ```.env``` file.
 
@@ -37,5 +38,6 @@ https://lost-vault.com/
 !tribe {Имя} - поиск племени
 !players {Имя1} && {Имя2} - сравнение двух игроков
 !tribes {Племя1} && {Племя2} - сравнение двух племен
+!vs {Племя} - подбор противника для клановой атаки
 ```
 Бот запущен на сервере herokuapp с токеном бота, размещенным в конфигах herokuapp. Для запуска на других серверах, возможно, потребуется отредактировать строку 11 в ``bot.py``, а также создать файл ``.env``.
