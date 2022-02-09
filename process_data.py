@@ -100,7 +100,7 @@ def update_db():
 
 def get_db_status():
     total = len(TRIBE_NAME_ID)
-    find_time = db.query_time()
+    find_time = db.query_time()[1]
     print(find_time)
     upd_time = datetime.strptime(str(find_time), '%Y-%m-%d %H:%M:%S')    
     time_now = datetime.now()
