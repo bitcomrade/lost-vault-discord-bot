@@ -1,4 +1,5 @@
 from tabulate import tabulate
+from datetime import datetime
 import search_lv_api
 import db_handle
 from numerize import numerize
@@ -84,6 +85,9 @@ class BotMessages:
     def help_message(self):
         """Displays help message"""
         return self.messages[2]
+    
+    def db_info_message(self):
+        return self.messages[3]
 
 
 # nstantiate BotMessages class
@@ -93,6 +97,17 @@ def update_db():
     df = db.df_from_dict()
     db.df_to_sql(df)
     return
+
+def get_db_status():
+    total = len(TRIBE_NAME_ID)
+    with open('last_upd.txt', 'r') as f:
+        find_time = f.read().rstrip()
+        upd_time = datetime.strptime(str(find_time), '%Y-%m-%d %H:%M:%S')    
+    time_now = datetime.now()
+    upd_age = round((time_now - upd_time).total_seconds()/60)
+    message = msg.db_info_message()
+    return message.format(total=total, upd_age=upd_age)
+    
 
 def get_tribe_id(tribe_name):
     dict_name = tribe_name.lower()
