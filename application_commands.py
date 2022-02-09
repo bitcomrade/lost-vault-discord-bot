@@ -12,17 +12,17 @@ class ApplicationCommandCog(commands.Cog):
         self.bot = bot
 
     
-    @nextcord.slash_command(
-        name='dbupdate', 
-        description='force update db',
-        guild_ids=[TESTING_GUILD_ID]
-        )
-    @commands.is_owner()
-    async def force_db_update(self, interaction: nextcord.Interaction):
-        await process_data.update_db()
-        await interaction.response.send_message(
-            "started db update"
-            )
+    # @nextcord.slash_command(
+    #     name='dbupdate', 
+    #     description='force update db',
+    #     guild_ids=[TESTING_GUILD_ID]
+    #     )
+    # @commands.has_role(940311856399126589)
+    # async def force_db_update(self, interaction: nextcord.Interaction):
+    #     await process_data.update_db()
+    #     await interaction.response.send_message(
+    #         "started db update"
+    #         )
     
     @nextcord.slash_command(
         name='vs', 
@@ -53,24 +53,25 @@ class ApplicationCommandCog(commands.Cog):
             ]   
         await interaction.response.send_autocomplete(get_near_tribe)
 
-    @nextcord.slash_command(
-        name='language',
-        description = 'change language', 
-        guild_ids=[TESTING_GUILD_ID]
-        )
-    @commands.is_owner()
-    async def set_language(
-        self, interaction: nextcord.Interaction,
-        lang: str = nextcord.SlashOption(
-            name="language",
-            description="choose language",
-            choices={"English":"en", "Russian":"ru"}
-            )
-        ):
-        process_data.msg.messages = process_data.msg.get_message_list(lang)
-        await interaction.response.send_message(
-            process_data.msg.hello_message()
-            )
+    # @nextcord.slash_command(
+    #     name='language',
+    #     description = 'change language', 
+    #     guild_ids=[TESTING_GUILD_ID],
+    #     default_permission=False
+    #     )
+    # @commands.has_role(940311856399126589)
+    # async def set_language(
+    #     self, interaction: nextcord.Interaction,
+    #     lang: str = nextcord.SlashOption(
+    #         name="language",
+    #         description="choose language",
+    #         choices={"English":"en", "Russian":"ru"}
+    #         )
+    #     ):
+    #     process_data.msg.messages = process_data.msg.get_message_list(lang)
+    #     await interaction.response.send_message(
+    #         process_data.msg.hello_message()
+    #         )
 
     @nextcord.slash_command(
         name="hello",
