@@ -121,3 +121,8 @@ class DBHandler:
         engine.dispose()
         return res_tribes
         
+    def query_time(self):
+        request=("""SELECT * FROM timetable""")
+        engine = create_engine(f"postgresql{self.sql_url[8:]}", echo=False)
+        q_time = engine.execute(request).fetchone()
+        return q_time
