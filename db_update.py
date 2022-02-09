@@ -13,12 +13,6 @@ api_search = search_lv_api.LostVault()
 
 class DBHandler:
     def __init__(self):
-        self.last_upd = datetime.today()
-        self.upd_uptime = datetime.now()
-        self.db_age = round(
-            (self.upd_uptime-self.last_upd).total_seconds()/60
-            )
-        self.isupdating = False
         self.is_sql_querying = False
         self.id_list = 'tribe_ids.txt'
         self.sql_url = os.getenv('DATABASE_URL')
@@ -36,7 +30,6 @@ class DBHandler:
     
     def make_tribes_dict(self):
         # Fetch all tribes info and generate dictionary
-        self.isupdating = True
         tribe_ids = self.get_tribe_ids()
         total_ids = len(tribe_ids)
         num_success = 0
@@ -58,8 +51,6 @@ class DBHandler:
             f"Errors: {num_fail}\n"
             )  
         print(*id_fail, sep='\n')
-        self.last_upd = datetime.now()
-        self.isupdating = False
         return tribes
     
     def df_from_dict(self):
@@ -76,3 +67,7 @@ class DBHandler:
 updater = DBHandler()
 data = updater.df_from_dict()
 updater.df_to_sql(data)
+update_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+with open('last_upd.txt', 'w') as f:
+    f.write(update_time)
