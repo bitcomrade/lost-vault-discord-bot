@@ -5,9 +5,9 @@ import pandas as pd
 from sqlalchemy import create_engine
 from tqdm import tqdm
 import search_lv_api
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
 
-load_dotenv()
+#load_dotenv()
 
 api_search = search_lv_api.LostVault()
 
@@ -15,7 +15,9 @@ class DBHandler:
     def __init__(self):
         self.last_upd = datetime.today()
         self.upd_uptime = datetime.now()
-        self.db_age = round((self.upd_uptime-self.last_upd).total_seconds()/60)
+        self.db_age = round(
+            (self.upd_uptime-self.last_upd).total_seconds()/60
+            )
         self.isupdating = False
         self.is_sql_querying = False
         self.id_list = 'tribe_ids.txt'
@@ -64,17 +66,7 @@ class DBHandler:
         tribes_dict = self.make_tribes_dict()
         tribes_df = pd.DataFrame.from_dict(tribes_dict, orient='index')
         return tribes_df
-    
-    def df_from_csv(self, csv_file):
-        tribes_df = pd.read_csv(csv_file, index_col=[0])
-        print('Dataframe loaded')
-        return tribes_df
-    
-    def df_to_csv(self, dataframe, filename):
-        dataframe.to_csv(filename)
-        print(f"Dataframe successfully saved to {filename}")
-        return 
-    
+        
     def df_to_sql(self, dataframe):
         engine = create_engine(f"postgresql{self.sql_url[8:]}", echo=False)
         dataframe.to_sql('lvtribes', con=engine, if_exists='replace')
