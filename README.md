@@ -11,13 +11,16 @@ Besides it, every hour ```db_update.py``` fetches top 140 tribes stats and store
 Available commands (by prefix):
 ```
 !hello - greetings message
-!language en / !language ru - change messages language to English/Russian
 !seekhelp - help and instructions
 !player {Name} - searches for a player
 !tribe {Name} - searches for a tribe
 !players {Name1} && {Name2} - compares two players
 !tribes {Tribe1} && {Tribe2} - compares two tribes
 !vs {Tribe} - searches opponents for tribe attack
+
+(following commands require "Trustworthy" role to run)
+!language en / !language ru - change messages language to English/Russian
+!dbstatus - shows amount of tribes in DB and time since the last update
 !dbupdate - forces an update to the database
 !ping
 ```
@@ -25,7 +28,6 @@ Available commands (by prefix):
 Slash commands:
 ```
 /hello
-/language
 /seekhelp
 /player
 /players
@@ -49,13 +51,16 @@ https://lost-vault.com/
 Доступные команды (по префиксу):
 ```
 !hello - приветствие
-!language en / !language ru - сменить язык сообщений на английский/русский
 !seekhelp - помощь и инструкции
 !player {Имя} - поиск игрока
 !tribe {Имя} - поиск племени
 !players {Имя1} && {Имя2} - сравнение двух игроков
 !tribes {Племя1} && {Племя2} - сравнение двух племен
 !vs {Племя} - подбор противника для клановой атаки
+
+(следующие команды требуют роли "Trustworthy" для запуска)
+!language en / !language ru - сменить язык сообщений на английский/русский
+!dbstatus - статус БД и время последнего обновления
 !dbupdate - принудительно запускает обновление базы данных
 !ping
 ```
@@ -63,7 +68,6 @@ https://lost-vault.com/
 Поддержка слэш-команд:
 ```
 /hello
-/language
 /seekhelp
 /player
 /players
