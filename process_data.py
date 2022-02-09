@@ -100,9 +100,9 @@ def update_db():
 
 def get_db_status():
     total = len(TRIBE_NAME_ID)
-    with open('last_upd.txt', 'r') as f:
-        find_time = f.read().rstrip()
-        upd_time = datetime.strptime(str(find_time), '%Y-%m-%d %H:%M:%S')    
+    find_time = db.query_time()
+    print(find_time)
+    upd_time = datetime.strptime(str(find_time), '%Y-%m-%d %H:%M:%S')    
     time_now = datetime.now()
     upd_age = round((time_now - upd_time).total_seconds()/60)
     message = msg.db_info_message()

@@ -61,6 +61,9 @@ class DBHandler:
     def df_to_sql(self, dataframe):
         engine = create_engine(f"postgresql{self.sql_url[8:]}", echo=False)
         dataframe.to_sql('lvtribes', con=engine, if_exists='replace')
+        update_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        df_time = pd.DataFrame({"time": update_time})
+        df_time.to_sql('timetable', con=engine, if_exists='replace')
         engine.dispose()
         return
         
@@ -68,8 +71,4 @@ updater = DBHandler()
 data = updater.df_from_dict()
 updater.df_to_sql(data)
 update_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-
-with open('last_upd.txt', 'w') as f:
-    f.write(update_time)
-
 print(f"Update successful at {update_time}")
