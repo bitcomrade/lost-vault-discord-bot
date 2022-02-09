@@ -62,7 +62,7 @@ class DBHandler:
         engine = create_engine(f"postgresql{self.sql_url[8:]}", echo=False)
         dataframe.to_sql('lvtribes', con=engine, if_exists='replace')
         update_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        df_time = pd.DataFrame({"time": update_time})
+        df_time = pd.DataFrame({"time": update_time}, index=[0])
         df_time.to_sql('timetable', con=engine, if_exists='replace')
         engine.dispose()
         return
