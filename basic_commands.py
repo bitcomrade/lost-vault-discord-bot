@@ -1,6 +1,8 @@
 import time
+
 import nextcord
 from nextcord.ext import commands
+
 import process_data
 
 
@@ -9,12 +11,10 @@ class BasicCommmands(commands.Cog):
 
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-
-    
+        
     @commands.Cog.listener()
     async def on_ready(self):
         process_data.msg.get_message_list()
-        
             
     @commands.command(name='dbupdate')
     @commands.is_owner()
