@@ -71,3 +71,5 @@ update_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
 with open('last_upd.txt', 'w') as f:
     f.write(update_time)
+
+print(f"Update successful at {update_time}")
