@@ -5,9 +5,9 @@ from nextcord.ext import commands
 
 # for testing purposes when hosting on my PC
 # Remove dotenv when deploy
-#from dotenv import load_doten
+# from dotenv import load_dotenv
 
-#load_dotenv()
+# load_dotenv()
 
 # Set nextcord bot token variable according to your environment
 TOKEN = os.getenv("DISCORD-TOKEN")
