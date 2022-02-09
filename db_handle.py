@@ -15,7 +15,9 @@ class DBHandler:
     def __init__(self):
         self.last_upd = datetime.today()
         self.upd_uptime = datetime.now()
-        self.db_age = round((self.upd_uptime-self.last_upd).total_seconds()/60)
+        self.db_age = round(
+            (self.upd_uptime-self.last_upd).total_seconds()/60
+            )
         self.isupdating = False
         self.is_sql_querying = False
         self.id_list = 'tribe_ids.txt'
@@ -96,12 +98,12 @@ class DBHandler:
         if res_power.empty:
             engine.dispose()
             return res_power
-        treshold = 1.15
+        treshold = 1.075
         power = int(res_power['power'])*treshold
         self.fetch_vs = (
             """SELECT "rank", "tribe", "fame", "power" """
             f"""FROM lvtribes WHERE "power" < {power} """
-            """ORDER BY "rank" LIMIT 8"""
+            """ORDER BY "rank" LIMIT 5"""
             )
         res_vs = pd.read_sql(self.fetch_vs, con=engine)
         vs_exclude = res_vs[~res_vs['tribe'].isin(res_tribe['tribe'])]
@@ -109,4 +111,13 @@ class DBHandler:
         engine.dispose()
         return output
         
-
+    def query_tribes_list(self):
+        request=("""
+            SELECT index, "tribe"
+            FROM lvtribes"""
+        )
+        engine = create_engine(f"postgresql{self.sql_url[8:]}", echo=False)
+        res_tribes = pd.read_sql(request, con=engine)
+        engine.dispose()
+        return res_tribes
+        
