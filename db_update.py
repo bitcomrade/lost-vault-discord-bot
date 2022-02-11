@@ -5,18 +5,14 @@ import pandas as pd
 from sqlalchemy import create_engine
 from tqdm import tqdm
 import search_lv_api
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
 
-load_dotenv()
+#load_dotenv()
 
 api_search = search_lv_api.LostVault()
 
 class DBHandler:
     def __init__(self):
-        self.last_upd = datetime.today()
-        self.upd_uptime = datetime.now()
-        self.db_age = round((self.upd_uptime-self.last_upd).total_seconds()/60)
-        self.isupdating = False
         self.is_sql_querying = False
         self.id_list = 'tribe_ids.txt'
         self.sql_url = os.getenv('DATABASE_URL')
@@ -34,7 +30,6 @@ class DBHandler:
     
     def make_tribes_dict(self):
         # Fetch all tribes info and generate dictionary
-        self.isupdating = True
         tribe_ids = self.get_tribe_ids()
         total_ids = len(tribe_ids)
         num_success = 0
@@ -56,31 +51,24 @@ class DBHandler:
             f"Errors: {num_fail}\n"
             )  
         print(*id_fail, sep='\n')
-        self.last_upd = datetime.now()
-        self.isupdating = False
         return tribes
     
     def df_from_dict(self):
         tribes_dict = self.make_tribes_dict()
         tribes_df = pd.DataFrame.from_dict(tribes_dict, orient='index')
         return tribes_df
-    
-    def df_from_csv(self, csv_file):
-        tribes_df = pd.read_csv(csv_file, index_col=[0])
-        print('Dataframe loaded')
-        return tribes_df
-    
-    def df_to_csv(self, dataframe, filename):
-        dataframe.to_csv(filename)
-        print(f"Dataframe successfully saved to {filename}")
-        return 
-    
+        
     def df_to_sql(self, dataframe):
         engine = create_engine(f"postgresql{self.sql_url[8:]}", echo=False)
         dataframe.to_sql('lvtribes', con=engine, if_exists='replace')
+        update_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        df_time = pd.DataFrame({"time": update_time}, index=[0])
+        df_time.to_sql('timetable', con=engine, if_exists='replace')
         engine.dispose()
         return
         
 updater = DBHandler()
 data = updater.df_from_dict()
 updater.df_to_sql(data)
+update_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+print(f"Update successful at {update_time}")

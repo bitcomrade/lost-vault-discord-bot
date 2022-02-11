@@ -1,16 +1,34 @@
 from tabulate import tabulate
+from datetime import datetime
 import search_lv_api
 import db_handle
 from numerize import numerize
 
+tabulate.WIDE_CHARS_MODE = False
 
+# instantiate LostVault class from search_lv_api.py
+vault = search_lv_api.LostVault()
+# nstantiate Database Handler
+db = db_handle.DBHandler()
+
+
+def get_tribes_dict():
+    df_tribes = db.query_tribes_list()
+    tribes_keys = df_tribes.set_index('index').T.to_dict('list')
+    res_dict = {}
+    for key, value in tribes_keys.items():
+        res_key = value[0].lower()
+        res_dict[res_key] = key
+    return res_dict
+
+
+TRIBE_NAME_ID = get_tribes_dict()
 TRIBE_ORDER = ['tribe', 'lvl', 'rank', 'members', 'reactor', 'fame', 'power']
 PLAYER_ORDER = [
     'name','tribe','class','lvl','rank',
     'str','agi','end','int','lck','','fame','power',
     'quests','explores','monsters','caravan','vault','survival'
     ]
-
 
 # Assign bot messages
 class BotMessages:
@@ -68,15 +86,35 @@ class BotMessages:
         """Displays help message"""
         return self.messages[2]
     
+    def db_info_message(self):
+        return self.messages[3]
 
-# instantiate LostVault class from search_lv_api.py
-vault = search_lv_api.LostVault()
 
 # nstantiate BotMessages class
 msg = BotMessages()
 
-# nstantiate Database Handler
-db = db_handle.DBHandler()
+def update_db():
+    df = db.df_from_dict()
+    db.df_to_sql(df)
+    return
+
+def get_db_status():
+    total = len(TRIBE_NAME_ID)
+    find_time = db.query_time()[1]
+    print(find_time)
+    upd_time = datetime.strptime(str(find_time), '%Y-%m-%d %H:%M:%S')    
+    time_now = datetime.now()
+    upd_age = round((time_now - upd_time).total_seconds()/60)
+    message = msg.db_info_message()
+    return message.format(total=total, upd_age=upd_age)
+    
+
+def get_tribe_id(tribe_name):
+    dict_name = tribe_name.lower()
+    if dict_name in TRIBE_NAME_ID:
+        return TRIBE_NAME_ID[dict_name]
+    else:
+        return tribe_name
 
 def prettify_tribe(data):
     """Generates formatted table from the tribe stats using tabulate module
@@ -155,7 +193,39 @@ def prettify_compare(obj_type, data_1, data_2):
     result = f"\n```\n{table}\n```\n"
     return result
 
-    
+def draw_swords (lenght):
+    insert = ' ' if lenght % 2 else ''
+    sword_len = int((lenght - len(insert))/2)
+    blade_len = int(round((sword_len - 3)*2/3))
+    hilt_len = sword_len-blade_len-3
+    swords = (
+        '+' + '-'*hilt_len + '}' + '='*blade_len + '>' + insert +
+        '<' + '='*blade_len + '{' + '-'*hilt_len + '+'
+        )
+    return swords
+
+def prettify_vs(opponents):
+    opp_list = opponents.values.tolist()
+    for row in opp_list:
+        row[:] = [
+            numerize.numerize(val) 
+            if (type(val) == int) 
+            else val 
+            for val in row
+            ]
+    headers_list = ['RANK', 'TRIBE', 'FAME', 'POWER']
+    table = tabulate(
+        opp_list, headers=headers_list, 
+        colalign=['left','left','left','left'], 
+        disable_numparse=False)
+    res_list = table.split('\n')
+    table_len = len(max(res_list, key=len))
+    swords = draw_swords(table_len)
+    res_list.insert(3, swords)
+    res_string = '\n'.join(res_list)
+    result = f"\n```\n{res_string}\n```\n"
+    return result
+
 def tribe_info(name):
     """Returns tribe information or no result message
 
@@ -164,7 +234,8 @@ def tribe_info(name):
     Returns:
         string: info table or no result message
     """
-    result = vault.get_tribe(name)
+    id = get_tribe_id(name)
+    result = vault.get_tribe(id)
     output = (prettify_tribe(result) if result else msg.no_result_message())
     return output
 
@@ -189,8 +260,27 @@ def compare(obj_type, objects):
         compare_1 = vault.get_player(obj_1)
         compare_2 = vault.get_player(obj_2)
     else:
-        compare_1 = vault.get_tribe(obj_1)
-        compare_2 = vault.get_tribe(obj_2)
+        id_1 = get_tribe_id(obj_1)
+        id_2 = get_tribe_id(obj_2)
+        compare_1 = vault.get_tribe(id_1)
+        compare_2 = vault.get_tribe(id_2)
+    if not(compare_1 and compare_2):
+        return msg.no_result_message()
+    # make comparison list
+    # prettify output
+    result = prettify_compare(obj_type, compare_1, compare_2)
+    # return output
+    return result
+
+def compare_slash(obj_type, obj_1, obj_2):
+    if obj_type == 'players':
+        compare_1 = vault.get_player(obj_1)
+        compare_2 = vault.get_player(obj_2)
+    else:
+        id_1 = get_tribe_id(obj_1)
+        id_2 = get_tribe_id(obj_2)
+        compare_1 = vault.get_tribe(id_1)
+        compare_2 = vault.get_tribe(id_2)
     if not(compare_1 and compare_2):
         return msg.no_result_message()
     # make comparison list
@@ -200,49 +290,12 @@ def compare(obj_type, objects):
     return result
 
 def get_vs(tribe):
-    tribe_id = vault.get_search_query(tribe)
-    opponents = db.get_vs(tribe_id)
+    id = get_tribe_id(tribe)
+    tribe_vs = vault.get_search_query(id)
+    opponents = db.get_vs(tribe_vs)
     output = (
         prettify_vs(opponents) 
         if not(opponents.empty) 
         else msg.no_result_message()
         )
     return output
-    
-def update_db():
-    df = db.df_from_dict()
-    db.df_to_sql(df)
-    return
-
-def prettify_vs(opponents):
-    opp_list = opponents.values.tolist()
-    for row in opp_list:
-        row[:] = [
-            numerize.numerize(val) 
-            if (type(val) == int) 
-            else val 
-            for val in row
-            ]
-    headers_list = ['RANK', 'TRIBE', 'FAME', 'POWER']
-    table = tabulate(
-        opp_list, headers=headers_list, 
-        colalign=['left','left','left','left'], 
-        disable_numparse=False)
-    res_list = table.split('\n')
-    table_len = len(max(res_list, key=len))
-    swords = draw_swords(table_len)
-    res_list.insert(3, swords)
-    res_string = '\n'.join(res_list)
-    result = f"\n```\n{res_string}\n```\n"
-    return result
-
-def draw_swords (lenght):
-    insert = ' ' if lenght % 2 else ''
-    sword_len = int((lenght - len(insert))/2)
-    blade_len = int(round((sword_len - 3)*2/3))
-    hilt_len = sword_len-blade_len-3
-    swords = (
-        '+' + '-'*hilt_len + '}' + '='*blade_len + '>' + insert +
-        '<' + '='*blade_len + '{' + '-'*hilt_len + '+'
-        )
-    return swords

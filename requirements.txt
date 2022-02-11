@@ -1,5 +1,4 @@
 nextcord
-python-dotenv
 requests
 bs4
 tabulate[widechars]
