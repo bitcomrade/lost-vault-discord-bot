@@ -1,7 +1,6 @@
 import random
-from typing import Any, Dict, Tuple, Union
+from typing import Any, Dict, List, Tuple, Union
 
-import bs4
 import requests
 from bs4 import BeautifulSoup
 
@@ -18,7 +17,7 @@ def get_value(soup_value: BeautifulSoup) -> int:
 
 def parse_info(
     search_soup: BeautifulSoup,
-) -> Tuple[bs4.element.ResultSet[Any], bs4.element.ResultSet[Any]]:
+) -> Tuple[List[Any], List[Any]]:
     """finds all parameter and parametter names in api html-code"""
     labels = search_soup.findAll("div", {"class": "label"})
     values = search_soup.findAll("div", {"class": "value"})
