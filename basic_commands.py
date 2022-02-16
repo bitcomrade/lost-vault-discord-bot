@@ -5,6 +5,9 @@ from nextcord.ext import commands
 
 import process_data
 
+SERVICE_ROLE = "LV bot trustworthy"
+ADMIN_ROLE = "LV bot admin"
+
 
 class BasicCommmands(commands.Cog):
     """A couple of simple commands."""
@@ -17,23 +20,23 @@ class BasicCommmands(commands.Cog):
         process_data.msg.get_message_list()
 
     @commands.command(name="dbupdate")
-    @commands.has_role("Trustworthy")
+    @commands.has_role(ADMIN_ROLE)
     async def force_db_update(self, ctx: commands.Context):
-        await process_data.update_db()
+        process_data.update_db()
 
     @commands.command(name="vs")
     async def find_opponents(self, ctx: commands.Context, *, text: str):
         await ctx.send(process_data.get_vs(text))
 
     @commands.command(name="language")
-    @commands.has_role("Trustworthy")
+    @commands.has_role(SERVICE_ROLE, ADMIN_ROLE)
     async def set_language(self, ctx: commands.Context, *, text: str):
         process_data.msg.messages = process_data.msg.get_message_list(text)
         await ctx.send(process_data.msg.hello_message())
 
     @commands.command(name="ping")
     @commands.cooldown(rate=1, per=3)
-    @commands.has_role("Trustworthy")
+    @commands.has_role(SERVICE_ROLE, ADMIN_ROLE)
     async def ping(self, ctx: commands.Context):
         """Get the bot's current websocket and API latency."""
         start_time = time.time()
@@ -57,7 +60,7 @@ class BasicCommmands(commands.Cog):
         await ctx.send(process_data.msg.help_message())
 
     @commands.command(name="dbstatus")
-    @commands.has_role("Trustworthy")
+    @commands.has_role(SERVICE_ROLE, ADMIN_ROLE)
     async def send_db_msg(self, ctx: commands.Context):
         await ctx.send(process_data.get_db_status())
 
