@@ -74,7 +74,7 @@ class BotMessages:
                 msg_list.append(line.rstrip().replace("$$", "\n"))
         return msg_list
 
-    def get_message_list(self, user_lang: str = "en") -> List[str]:
+    def get_message_list(self, user_lang: str = "ru") -> List[str]:
         """Finds messages in a given language
 
         Args:
