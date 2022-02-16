@@ -85,7 +85,8 @@ class BotMessages:
             list: messages in particular language
         """
         all_messages = self.get_all_msg(self.txt_file)
-        different_messages = int(all_messages[0][0])
+        first_line_words = all_messages[0].split()
+        different_messages = int(first_line_words[0])
         lang_index = all_messages.index(self.language[user_lang.lower()]) + 1
         messages = all_messages[lang_index : (lang_index + different_messages)]
         return messages
@@ -138,7 +139,6 @@ class BotMessages:
 
 # nstantiate BotMessages class
 msg = BotMessages()
-msg.get_message_list()
 
 
 def update_db() -> None:
