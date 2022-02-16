@@ -98,12 +98,12 @@ class DBHandler:
         if res_power.empty:
             engine.dispose()
             return res_power
-        treshold = 1.075
+        treshold = 1.05
         power = int(res_power['power'])*treshold
         self.fetch_vs = (
             """SELECT "rank", "tribe", "fame", "power" """
             f"""FROM lvtribes WHERE "power" < {power} """
-            """ORDER BY "rank" LIMIT 5"""
+            """ORDER BY "rank" LIMIT 10"""
             )
         res_vs = pd.read_sql(self.fetch_vs, con=engine)
         vs_exclude = res_vs[~res_vs['tribe'].isin(res_tribe['tribe'])]
