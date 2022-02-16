@@ -13,6 +13,10 @@ class ApplicationCommandCog(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
+    @commands.Cog.listener()
+    async def on_ready(self):
+        process_data.msg.get_message_list()
+
     @nextcord.slash_command(name="vs", description=process_data.msg.vs_slash())
     async def find_opponents(
         self,
