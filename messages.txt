@@ -1,4 +1,4 @@
-4 messages total:
+14 messages total:
 1 - Hello message
 2 - No result message
 3 - Help message
