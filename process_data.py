@@ -55,7 +55,7 @@ class BotMessages:
         # Set the language of the bot below
         # str value must match Language row in the messages file
         self.txt_file = "messages.txt"
-        self.default = "en"
+        self.default = "ru"
         self.language = {"en": "English", "ru": "Russian"}
         self.messages = self.get_message_list()
 
@@ -104,6 +104,36 @@ class BotMessages:
 
     def db_info_message(self) -> str:
         return self.messages[3]
+
+    def vs_slash(self) -> str:
+        return self.messages[4]
+
+    def tribe_name_slash(self) -> str:
+        return self.messages[5]
+
+    def hello_slash(self) -> str:
+        return self.messages[6]
+
+    def help_slash(self) -> str:
+        return self.messages[7]
+
+    def player_info_slash(self) -> str:
+        return self.messages[8]
+
+    def tribe_info_slash(self) -> str:
+        return self.messages[9]
+
+    def compare_players_slash(self) -> str:
+        return self.messages[10]
+
+    def compare_tribes_slash(self) -> str:
+        return self.messages[11]
+
+    def tribe_1_slash(self) -> str:
+        return self.messages[12]
+
+    def tribe_2_slash(self) -> str:
+        return self.messages[13]
 
 
 # nstantiate BotMessages class

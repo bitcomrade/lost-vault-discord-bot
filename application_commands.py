@@ -13,14 +13,12 @@ class ApplicationCommandCog(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @nextcord.slash_command(
-        name="vs", description="find worthy opponents for gvg"
-    )
+    @nextcord.slash_command(name="vs", description=process_data.msg.vs_slash())
     async def find_opponents(
         self,
         interaction: nextcord.Interaction,
         tribe: str = nextcord.SlashOption(
-            name="tribe", description="tribe name"
+            name="tribe", description=process_data.msg.tribe_name_slash()
         ),
     ) -> str:
         await interaction.response.send_message(process_data.get_vs(tribe))
@@ -38,21 +36,27 @@ class ApplicationCommandCog(commands.Cog):
         ]
         await interaction.response.send_autocomplete(get_near_tribe)
 
-    @nextcord.slash_command(name="hello", description="sends hello message")
+    @nextcord.slash_command(
+        name="hello", description=process_data.msg.hello_slash()
+    )
     async def send_hello_msg(self, interaction: nextcord.Interaction):
         """Replies to hello message with basic information"""
         await interaction.response.send_message(
             process_data.msg.hello_message()
         )
 
-    @nextcord.slash_command(name="seekhelp", description="sends help message")
+    @nextcord.slash_command(
+        name="seekhelp", description=process_data.msg.help_slash()
+    )
     async def send_help_msg(self, interaction: nextcord.Interaction):
         """Replies with basic instructions and commands"""
         await interaction.response.send_message(
             process_data.msg.help_message()
         )
 
-    @nextcord.slash_command(name="player", description="find player info")
+    @nextcord.slash_command(
+        name="player", description=process_data.msg.player_info_slash()
+    )
     async def send_player_info(
         self, interaction: nextcord.Interaction, player: str
     ):
@@ -63,12 +67,14 @@ class ApplicationCommandCog(commands.Cog):
             process_data.player_info(player)
         )
 
-    @nextcord.slash_command(name="tribe", description="find tribe info")
+    @nextcord.slash_command(
+        name="tribe", description=process_data.msg.tribe_info_slash()
+    )
     async def send_tribe_info(
         self,
         interaction: nextcord.Interaction,
         tribe: str = nextcord.SlashOption(
-            name="tribe", description="name of the tribe"
+            name="tribe", description=process_data.msg.tribe_name_slash()
         ),
     ):
         """
@@ -89,7 +95,9 @@ class ApplicationCommandCog(commands.Cog):
         ]
         await interaction.response.send_autocomplete(get_near_tribe)
 
-    @nextcord.slash_command(name="players", description="compare two players")
+    @nextcord.slash_command(
+        name="players", description=process_data.msg.compare_players_slash()
+    )
     async def compare_player_info(
         self, interaction: nextcord.Interaction, player_1: str, player_2: str
     ):
@@ -100,15 +108,17 @@ class ApplicationCommandCog(commands.Cog):
             process_data.compare_slash("players", player_1, player_2)
         )
 
-    @nextcord.slash_command(name="tribes", description="compare two tribes")
+    @nextcord.slash_command(
+        name="tribes", description=process_data.msg.compare_tribes_slash()
+    )
     async def compare_tribe_info(
         self,
         interaction: nextcord.Interaction,
         tribe_1: str = nextcord.SlashOption(
-            name="tribe_1", description="tribe #1 name"
+            name="tribe_1", description=process_data.msg.tribe_1_slash()
         ),
         tribe_2: str = nextcord.SlashOption(
-            name="tribe_2", description="tribe #2 name"
+            name="tribe_2", description=process_data.msg.tribe_2_slash()
         ),
     ):
         """
