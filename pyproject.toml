@@ -6,7 +6,7 @@ authors = ["bitcomrade <bitcomrade@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
-nextcord = "^2.0.0-alpha.7"
+nextcord = "^2.0.0-alpha.8"
 pandas = "^1.4.0"
 SQLAlchemy = "^1.4.31"
 tqdm = "^4.62.3"
