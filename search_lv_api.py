@@ -1,3 +1,4 @@
+import random
 from typing import Any, Dict, Tuple, Union
 
 import bs4
@@ -55,7 +56,8 @@ class LostVault:
             query_kind (string): to distinguish  between guild and player URL
         """
         search_query = self.get_search_query(name)
-        query_url = f"{self.api_url}{query_kind}/{search_query}/"
+        tail = random.randint(1, 100)
+        query_url = f"{self.api_url}{query_kind}/{search_query}/?{tail}"
         response = requests.get(query_url, headers=self.headers)
         if response.status_code == 404:
             return None
