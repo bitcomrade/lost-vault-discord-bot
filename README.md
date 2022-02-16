@@ -18,9 +18,10 @@ Available commands (by prefix):
 !tribes {Tribe1} && {Tribe2} - compares two tribes
 !vs {Tribe} - searches opponents for tribe attack
 
-(following commands require "Trustworthy" role to run)
+(following commands require "LV bot trustworthy" or "LV bot admin" role to run)
 !language en / !language ru - change messages language to English/Russian
 !dbstatus - shows amount of tribes in DB and time since the last update
+(following command requires "LV bot admin" role to run)
 !dbupdate - forces an update to the database
 !ping
 ```
@@ -58,9 +59,10 @@ https://lost-vault.com/
 !tribes {Племя1} && {Племя2} - сравнение двух племен
 !vs {Племя} - подбор противника для клановой атаки
 
-(следующие команды требуют роли "Trustworthy" для запуска)
+(следующие команды требуют роли "LV bot trustworthy" или "LV bot admin" для запуска)
 !language en / !language ru - сменить язык сообщений на английский/русский
 !dbstatus - статус БД и время последнего обновления
+(следующая команда требует роли "LV bot admin" для запуска)
 !dbupdate - принудительно запускает обновление базы данных
 !ping
 ```
