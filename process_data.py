@@ -138,6 +138,7 @@ class BotMessages:
 
 # nstantiate BotMessages class
 msg = BotMessages()
+msg.get_message_list()
 
 
 def update_db() -> None:
