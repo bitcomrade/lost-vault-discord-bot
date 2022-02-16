@@ -29,14 +29,14 @@ class BasicCommmands(commands.Cog):
         await ctx.send(process_data.get_vs(text))
 
     @commands.command(name="language")
-    @commands.has_role(SERVICE_ROLE, ADMIN_ROLE)
+    @commands.has_any_role(SERVICE_ROLE, ADMIN_ROLE)
     async def set_language(self, ctx: commands.Context, *, text: str):
         process_data.msg.messages = process_data.msg.get_message_list(text)
         await ctx.send(process_data.msg.hello_message())
 
     @commands.command(name="ping")
     @commands.cooldown(rate=1, per=3)
-    @commands.has_role(SERVICE_ROLE, ADMIN_ROLE)
+    @commands.has_any_role(SERVICE_ROLE, ADMIN_ROLE)
     async def ping(self, ctx: commands.Context):
         """Get the bot's current websocket and API latency."""
         start_time = time.time()
@@ -60,7 +60,7 @@ class BasicCommmands(commands.Cog):
         await ctx.send(process_data.msg.help_message())
 
     @commands.command(name="dbstatus")
-    @commands.has_role(SERVICE_ROLE, ADMIN_ROLE)
+    @commands.has_any_role(SERVICE_ROLE, ADMIN_ROLE)
     async def send_db_msg(self, ctx: commands.Context):
         await ctx.send(process_data.get_db_status())
 
