@@ -20,7 +20,7 @@ ALERTS = [
 
 class Timer:
     def __init__(
-        self, name: str, callback, timeout: int = 300, advance: int = 60
+        self, name: str, callback, timeout: int = 28800, advance: int = 3600
     ) -> None:
         self.name = name
         self._timeout = timeout
@@ -76,7 +76,7 @@ class AttackTimer(commands.Cog):
     ):
         channel = self.bot.get_channel(CHANNEL)
         if tribe not in self.timers:
-            timer = Timer(tribe, self.notifications, 300, 60)
+            timer = Timer(tribe, self.notifications, 28800, 3600)
             self.timers[tribe] = timer
             await interaction.response.defer(
                 ephemeral=True, with_message=False
@@ -121,6 +121,9 @@ class AttackTimer(commands.Cog):
         str_timedelta = ":".join(str(timedelta).split(":")[:2])
         output = message.format(MENTION_ROLE, timer.name, str_timedelta)
         await channel.send(output)
+        if timer.stage == 2:
+            self.timers[timer.name].cancel()
+            self.timers.pop(timer.namr, None)
 
 
 def setup(bot):
