@@ -23,6 +23,7 @@ Available commands (by prefix):
 !dbstatus - shows amount of tribes in DB and time since the last update
 (following command requires "LV bot admin" role to run)
 !dbupdate - forces an update to the database
+!gvgreset {Tribe} == {HH:MM} - force change attack timer
 !ping
 ```
 
@@ -35,6 +36,8 @@ Slash commands:
 /tribe - with autocomplete
 /tribes - with autocomplete
 /vs - with autocomplete
+/gvg - launches next attack countdown
+/timers - list of active timers
 ```
 
 Bot is up and running on herokuapp server with bot token placed in herokuapp config vars. to run on other servers, you may need to edit line 11 in ```bot.py``` and also create an ```.env``` file.
@@ -64,6 +67,7 @@ https://lost-vault.com/
 !dbstatus - статус БД и время последнего обновления
 (следующая команда требует роли "LV bot admin" для запуска)
 !dbupdate - принудительно запускает обновление базы данных
+!gvgreset {Племя} == {ЧЧ:ММ} - принудительно меняет таймер атаки
 !ping
 ```
 
@@ -76,6 +80,8 @@ https://lost-vault.com/
 /tribe - с автозаполнением
 /tribes - с автозаполнением
 /vs - с автозаполнением
+/gvg  - запуск таймера следующей атаки
+/timers - просмотр запущенных таймеров
 ```
 
 Бот запущен на сервере herokuapp с токеном бота, размещенным в конфигах herokuapp. Для запуска на других серверах, возможно, потребуется отредактировать строку 11 в ``bot.py``, а также создать файл ``.env``.
