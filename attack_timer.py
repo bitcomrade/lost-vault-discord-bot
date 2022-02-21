@@ -123,7 +123,7 @@ class AttackTimer(commands.Cog):
         await channel.send(output)
         if timer.stage == 2:
             self.timers[timer.name].cancel()
-            self.timers.pop(timer.namr, None)
+            self.timers.pop(timer.name, None)
 
 
 def setup(bot):
