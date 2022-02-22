@@ -24,7 +24,7 @@ ALERTS = [
 
 class Timer:
     def __init__(
-        self, name: str, callback, timeout: int = 28800, advance: int = 300
+        self, name: str, callback, timeout: int = 28740, advance: int = 300
     ) -> None:
         self.name = name
         self._timeout = timeout
@@ -120,6 +120,33 @@ class AttackTimer(commands.Cog):
         self.timers[tribe].cancel()
         timer = Timer(tribe, self.notifications, force_secs_left)
         self.timers[tribe] = timer
+
+    @nextcord.slash_command(
+        name="change_timer",
+        description="изменить таймер для гвг / change timer for gvg",
+        guild_ids=[GUILD_IDS],
+    )
+    async def change_timer(
+        self,
+        interaction: nextcord.Interaction,
+        tribe: str = nextcord.SlashOption(
+            required=True,
+            name="tribe",
+            description="выберите племя / choose tribe",
+            choices=["Dakar", "Инфектед Машрум"],
+        ),
+        time: str = "7:59",
+    ):
+        if tribe not in self.timers:
+            timer = Timer(tribe, self.notifications)
+            self.timers[tribe] = timer
+        else:
+            hours, minutes = (int(numbers) for numbers in time.split(":"))
+            force_secs_left = (hours * 60 + minutes) * 60
+            self.timers[tribe].cancel()
+            timer = Timer(tribe, self.notifications, force_secs_left)
+            self.timers[tribe] = timer
+        await interaction.response.defer(ephemeral=True, with_message=False)
 
     async def notifications(self, timer: Timer) -> None:
         channel = self.bot.get_channel(CHANNEL)
