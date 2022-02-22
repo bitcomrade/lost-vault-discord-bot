@@ -130,8 +130,8 @@ class AttackTimer(commands.Cog):
             MENTION[timer.name]["role"], timer.name, str_timedelta
         )
         await channel.send(output)
-        await channel.send(data.get_vs(MENTION[timer.name]["slug"]))
         if timer.stage == 2:
+            await channel.send(data.get_vs(MENTION[timer.name]["slug"]))
             self.timers[timer.name].cancel()
             self.timers.pop(timer.name, None)
 
