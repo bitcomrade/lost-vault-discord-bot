@@ -7,13 +7,14 @@ import pandas as pd
 from sqlalchemy import create_engine
 from tqdm import tqdm
 
-import search_lv_api
+import api_requests
+import process_data as data
 
 # from dotenv import load_dotenv
 
 # load_dotenv()
 
-api_search = search_lv_api.LostVault()
+api_search = api_requests.LostVault()
 
 
 class DBHandler:
@@ -49,9 +50,12 @@ class DBHandler:
         id_fail = []
         tribes = {}
         for tribe_id in tqdm(tribe_ids, total=total_ids):
-            tribe = api_search.get_tribe(tribe_id)
-            if tribe:
-                tribes[tribe_id] = api_search.get_tribe(tribe_id)
+            tribe_request = api_search.fetch_request(tribe_id, "guilds")
+            if tribe_request:
+                tribe = data.select_from_json(
+                    tribe_request, data.TRIBE_JSON_MAP
+                )
+                tribes[tribe_id] = tribe
                 num_success += 1
             else:
                 num_fail += 1

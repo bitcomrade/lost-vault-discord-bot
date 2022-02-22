@@ -5,11 +5,11 @@ import pandas as pd
 from numerize import numerize
 from tabulate import tabulate
 
+import api_requests
 import db_handle
-import search_lv_api
 
-# instantiate LostVault class from search_lv_api.py
-vault = search_lv_api.LostVault()
+# instantiate LostVault class from api_requests.py
+vault = api_requests.LostVault()
 # nstantiate Database Handler
 db = db_handle.DBHandler()
 
@@ -26,6 +26,15 @@ def get_tribes_dict() -> Dict[str, str]:
 
 TRIBE_NAME_ID = get_tribes_dict()
 TRIBE_ORDER = ["tribe", "lvl", "rank", "members", "reactor", "fame", "power"]
+TRIBE_JSON_MAP = {
+    "tribe": "name",
+    "lvl": "level",
+    "rank": "rank",
+    "members": "members",
+    "reactor": "reactor_level",
+    "fame": "points",
+    "power": "power",
+}
 PLAYER_ORDER = [
     "name",
     "tribe",
@@ -47,6 +56,27 @@ PLAYER_ORDER = [
     "vault",
     "survival",
 ]
+PLAYER_JSON_MAP = {
+    "name": "name",
+    "tribe": "guild_name",
+    "class": "profession",
+    "lvl": "level",
+    "rank": "rank",
+    "str": "stats.strength",
+    "agi": "stats.agility",
+    "end": "stats.endurance",
+    "int": "stats.intelligence",
+    "lck": "stats.luck",
+    # "": None,
+    "fame": "points",
+    "power": "stats.power",
+    "quests": "achievements.finish_quests",
+    "explores": "achievements.explore_wastelands",
+    "monsters": "achievements.kill_monsters",
+    "caravan": "achievements.protect_caravan",
+    "vault": "achievements.explore_vaults",
+    "survival": "survival_level",
+}
 
 
 # Assign bot messages
@@ -229,7 +259,7 @@ def prettify_compare(
         else:
             multi = 1
         value_1: Any = data_1.get(row)
-        value_2: Any | int = data_2.get(row)
+        value_2: Any = data_2.get(row)
         str_1 = "| |"
         str_2 = "| |"
         if type(value_1) == int:
@@ -237,6 +267,9 @@ def prettify_compare(
                 str_1 = "|+|"
             elif (multi * value_1) < (multi * value_2):
                 str_2 = "|+|"
+        elif type(value_1) == str:
+            value_1 = value_1.replace(" ", "\n")
+            value_2 = value_2.replace(" ", "\n")
         stat_table.append((value_1, str_1, row.upper(), str_2, value_2))
     table = tabulate(
         stat_table, colalign=("right", "center", "center", "center", "left")
@@ -298,7 +331,8 @@ def tribe_info(name: str) -> str:
         str: info table or no result message
     """
     id = get_tribe_id(name)
-    result = vault.get_tribe(id)
+    full_result = vault.fetch_request(id, "guilds")
+    result = select_from_json(full_result, TRIBE_JSON_MAP)
     output = prettify_tribe(result) if result else msg.no_result_message()
     return output
 
@@ -311,7 +345,8 @@ def player_info(name: str) -> str:
     Returns:
         str: info table or no result message
     """
-    result = vault.get_player(name)
+    full_result = vault.fetch_request(name, "players")
+    result = select_from_json(full_result, PLAYER_JSON_MAP)
     output = prettify_player(result) if result else msg.no_result_message()
     return output
 
@@ -322,13 +357,17 @@ def compare(obj_type: str, objects: str) -> str:
     # get obj_2 info
     obj_1, obj_2 = objects.split(" && ")
     if obj_type == "players":
-        compare_1 = vault.get_player(obj_1)
-        compare_2 = vault.get_player(obj_2)
+        full_compare_1 = vault.fetch_request(obj_1, "players")
+        full_compare_2 = vault.fetch_request(obj_2, "players")
+        compare_1 = select_from_json(full_compare_1, PLAYER_JSON_MAP)
+        compare_2 = select_from_json(full_compare_2, PLAYER_JSON_MAP)
     else:
         id_1 = get_tribe_id(obj_1)
         id_2 = get_tribe_id(obj_2)
-        compare_1 = vault.get_tribe(id_1)
-        compare_2 = vault.get_tribe(id_2)
+        full_compare_1 = vault.fetch_request(id_1, "guilds")
+        full_compare_2 = vault.fetch_request(id_2, "guilds")
+        compare_1 = select_from_json(full_compare_1, TRIBE_JSON_MAP)
+        compare_2 = select_from_json(full_compare_2, TRIBE_JSON_MAP)
     if not (compare_1 and compare_2):
         return msg.no_result_message()
     # make comparison list
@@ -340,13 +379,17 @@ def compare(obj_type: str, objects: str) -> str:
 
 def compare_slash(obj_type: str, obj_1: str, obj_2: str) -> str:
     if obj_type == "players":
-        compare_1 = vault.get_player(obj_1)
-        compare_2 = vault.get_player(obj_2)
+        full_compare_1 = vault.fetch_request(obj_1, "players")
+        full_compare_2 = vault.fetch_request(obj_2, "players")
+        compare_1 = select_from_json(full_compare_1, PLAYER_JSON_MAP)
+        compare_2 = select_from_json(full_compare_2, PLAYER_JSON_MAP)
     else:
         id_1 = get_tribe_id(obj_1)
         id_2 = get_tribe_id(obj_2)
-        compare_1 = vault.get_tribe(id_1)
-        compare_2 = vault.get_tribe(id_2)
+        full_compare_1 = vault.fetch_request(id_1, "guilds")
+        full_compare_2 = vault.fetch_request(id_2, "guilds")
+        compare_1 = select_from_json(full_compare_1, TRIBE_JSON_MAP)
+        compare_2 = select_from_json(full_compare_2, TRIBE_JSON_MAP)
     if not (compare_1 and compare_2):
         return msg.no_result_message()
     # make comparison list
@@ -366,3 +409,20 @@ def get_vs(tribe: str) -> str:
         else msg.no_result_message()
     )
     return output
+
+
+def select_from_json(
+    json: Dict[str, Any], map: Dict[str, str]
+) -> Dict[str, str | int]:
+    result: Dict[str, str | int] = {}
+    json_df = pd.json_normalize(json)
+    json_norm = json_df.to_dict("list")
+    if not json:
+        return result
+    for key in map:
+        if key == "members":
+            value: str | int = len(json[key])
+        elif key:
+            value = json_norm[map[key]][0]
+        result[key] = value
+    return result
