@@ -16,6 +16,7 @@ bot = commands.Bot(command_prefix="!")
 
 bot.load_extension("basic_commands")
 bot.load_extension("application_commands")
+bot.load_extension("attack_timer")
 
 if __name__ == "__main__":
     bot.run(TOKEN)

@@ -55,7 +55,7 @@ class BotMessages:
         # Set the language of the bot below
         # str value must match Language row in the messages file
         self.txt_file = "messages.txt"
-        self.default = "en"
+        self.default = "ru"
         self.language = {"en": "English", "ru": "Russian"}
         self.messages = self.get_message_list()
 
@@ -74,7 +74,7 @@ class BotMessages:
                 msg_list.append(line.rstrip().replace("$$", "\n"))
         return msg_list
 
-    def get_message_list(self, user_lang: str = "en") -> List[str]:
+    def get_message_list(self, user_lang: str = "ru") -> List[str]:
         """Finds messages in a given language
 
         Args:
@@ -85,7 +85,8 @@ class BotMessages:
             list: messages in particular language
         """
         all_messages = self.get_all_msg(self.txt_file)
-        different_messages = int(all_messages[0][0])
+        first_line_words = all_messages[0].split()
+        different_messages = int(first_line_words[0])
         lang_index = all_messages.index(self.language[user_lang.lower()]) + 1
         messages = all_messages[lang_index : (lang_index + different_messages)]
         return messages
@@ -104,6 +105,21 @@ class BotMessages:
 
     def db_info_message(self) -> str:
         return self.messages[3]
+
+    def timer_start_msg(self) -> str:
+        return self.messages[4]
+
+    def timer_advance_msg(self) -> str:
+        return self.messages[5]
+
+    def timer_attack_msg(self) -> str:
+        return self.messages[6]
+
+    def timer_new_msg(self) -> str:
+        return self.messages[7]
+
+    def time_left_msg(self) -> str:
+        return self.messages[8]
 
 
 # nstantiate BotMessages class
