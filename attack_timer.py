@@ -7,9 +7,13 @@ from nextcord.ext import commands
 
 import process_data as data
 
+GUILD_IDS = 395543532997181440
 SERVICE_ROLE = "LV bot trustworthy"
 ADMIN_ROLE = "LV bot admin"
-MENTION_ROLE = 899556122564911124
+MENTION = {
+    "Dakar": {"slug": "dakar", "role": 899556122564911124},
+    "Инфектед Машрум": {"slug": "guild-5", "role": 913869261389316106},
+}
 CHANNEL = 943498537008762960
 ALERTS = [
     data.msg.timer_start_msg(),
@@ -20,7 +24,7 @@ ALERTS = [
 
 class Timer:
     def __init__(
-        self, name: str, callback, timeout: int = 28800, advance: int = 3600
+        self, name: str, callback, timeout: int = 28800, advance: int = 300
     ) -> None:
         self.name = name
         self._timeout = timeout
@@ -62,7 +66,9 @@ class AttackTimer(commands.Cog):
         self.channel = self.bot.get_channel(CHANNEL)
 
     @nextcord.slash_command(
-        name="gvg", description="напоминалка для гвг / sets timer for gvg"
+        name="gvg",
+        description="таймер для гвг / sets timer for gvg",
+        guild_ids=GUILD_IDS,
     )
     async def set_timer(
         self,
@@ -76,7 +82,7 @@ class AttackTimer(commands.Cog):
     ):
         channel = self.bot.get_channel(CHANNEL)
         if tribe not in self.timers:
-            timer = Timer(tribe, self.notifications, 28800, 3600)
+            timer = Timer(tribe, self.notifications)
             self.timers[tribe] = timer
             await interaction.response.defer(
                 ephemeral=True, with_message=False
@@ -95,6 +101,7 @@ class AttackTimer(commands.Cog):
     @nextcord.slash_command(
         name="timers",
         description="список активных таймеров / active timers list",
+        guild_ids=GUILD_IDS,
     )
     async def timers_list(self, interaction: nextcord.Interaction):
         channel = self.bot.get_channel(CHANNEL)
@@ -111,7 +118,7 @@ class AttackTimer(commands.Cog):
         hours, minutes = (int(numbers) for numbers in str_time.split(":"))
         force_secs_left = (hours * 60 + minutes) * 60
         self.timers[tribe].cancel()
-        timer = Timer(tribe, self.notifications, force_secs_left, 60)
+        timer = Timer(tribe, self.notifications, force_secs_left)
         self.timers[tribe] = timer
 
     async def notifications(self, timer: Timer) -> None:
@@ -119,8 +126,11 @@ class AttackTimer(commands.Cog):
         message = ALERTS[timer.stage]
         timedelta = timer.time_left()
         str_timedelta = ":".join(str(timedelta).split(":")[:2])
-        output = message.format(MENTION_ROLE, timer.name, str_timedelta)
+        output = message.format(
+            MENTION[timer.name]["role"], timer.name, str_timedelta
+        )
         await channel.send(output)
+        await channel.send(data.get_vs(MENTION[timer.name]["slug"]))
         if timer.stage == 2:
             self.timers[timer.name].cancel()
             self.timers.pop(timer.name, None)

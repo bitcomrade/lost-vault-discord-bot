@@ -17,7 +17,9 @@ class BasicCommmands(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
+        channel = self.bot.get_channel(943549056972632065)
         process_data.msg.get_message_list()
+        await channel.send("bot online")
 
     @commands.command(name="dbupdate")
     @commands.has_role(ADMIN_ROLE)
