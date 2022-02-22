@@ -68,7 +68,7 @@ class AttackTimer(commands.Cog):
     @nextcord.slash_command(
         name="gvg",
         description="таймер для гвг / sets timer for gvg",
-        guild_ids=GUILD_IDS,
+        guild_ids=[GUILD_IDS],
     )
     async def set_timer(
         self,
@@ -101,7 +101,7 @@ class AttackTimer(commands.Cog):
     @nextcord.slash_command(
         name="timers",
         description="список активных таймеров / active timers list",
-        guild_ids=GUILD_IDS,
+        guild_ids=[GUILD_IDS],
     )
     async def timers_list(self, interaction: nextcord.Interaction):
         channel = self.bot.get_channel(CHANNEL)
