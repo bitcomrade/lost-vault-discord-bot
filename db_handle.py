@@ -1,7 +1,6 @@
 import os
 import time
-from datetime import datetime
-from typing import Dict, List
+from typing import Any, Dict, List
 
 import pandas as pd
 from sqlalchemy import create_engine
@@ -11,7 +10,6 @@ import api_requests
 import process_data as data
 
 # from dotenv import load_dotenv
-
 # load_dotenv()
 
 api_search = api_requests.LostVault()
@@ -19,11 +17,6 @@ api_search = api_requests.LostVault()
 
 class DBHandler:
     def __init__(self) -> None:
-        self.last_upd = datetime.today()
-        self.upd_uptime = datetime.now()
-        self.db_age = round(
-            (self.upd_uptime - self.last_upd).total_seconds() / 60
-        )
         self.isupdating = False
         self.is_sql_querying = False
         self.id_list = "tribe_ids.txt"
@@ -67,7 +60,6 @@ class DBHandler:
             f"Errors: {num_fail}\n"
         )
         print(*id_fail, sep="\n")
-        self.last_upd = datetime.now()
         self.isupdating = False
         return tribes
 
@@ -132,10 +124,19 @@ class DBHandler:
         engine.dispose()
         return res_tribes
 
-    def query_time(self) -> List[str | int]:
-        request = """SELECT * FROM timetable"""
+    def query_time(self, table: str = "timetable") -> List[Any]:
+        request = f"""SELECT * FROM {table}"""
         if self.sql_url:
             engine = create_engine(f"postgresql{self.sql_url[8:]}", echo=False)
-        q_time = engine.execute(request).fetchone()
+        q_time = engine.execute(request).fetchall()
         engine.dispose()
         return q_time
+
+    def time_to_sql(self, name: str, start: str, seconds: int) -> None:
+        if self.sql_url:
+            engine = create_engine(f"postgresql{self.sql_url[8:]}", echo=False)
+        df_time = pd.DataFrame.from_dict(
+            {name: (start, seconds)}, orient="index"
+        )
+        df_time.to_sql("timers", con=engine, if_exists="append")
+        engine.dispose()

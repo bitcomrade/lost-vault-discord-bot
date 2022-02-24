@@ -1,4 +1,4 @@
-from datetime import datetime
+import datetime
 from typing import Any, Dict, List
 
 import pandas as pd
@@ -166,11 +166,35 @@ def get_db_status() -> str:
     total = len(TRIBE_NAME_ID)
     find_time = db.query_time()[1]
     print(find_time)
-    upd_time = datetime.strptime(str(find_time), "%Y-%m-%d %H:%M:%S")
-    time_now = datetime.now()
+    upd_time = datetime.datetime.strptime(str(find_time), "%Y-%m-%d %H:%M:%S")
+    time_now = datetime.datetime.now()
     upd_age = round((time_now - upd_time).total_seconds() / 60)
     message = msg.db_info_message()
     return message.format(total=total, upd_age=upd_age)
+
+
+def write_timer_set_time(timer_name: str, total: int) -> None:
+    time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    db.time_to_sql(timer_name, time, total)
+    print(f"{timer_name} -> {time}|{total} written to db")
+
+
+def get_timer_set_time() -> Dict[str, int]:
+    timers = db.query_time(table="timers")
+    new_timers = {}
+    for name, start_time_str, total in timers:
+        start_time = datetime.datetime.strptime(
+            start_time_str, "%Y-%m-%d %H:%M:%S"
+        )
+        timedelta = datetime.timedelta(seconds=+total)
+        end_time = start_time + timedelta
+        current = datetime.datetime.now()
+        if current >= end_time:
+            time_left = 0
+        else:
+            time_left = int((end_time - current).total_seconds())
+        new_timers[name] = time_left
+    return new_timers
 
 
 def get_tribe_id(tribe_name: str) -> str:

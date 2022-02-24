@@ -1,11 +1,10 @@
 # type: ignore
 import os
 
-from nextcord.ext import commands
-
 # for testing purposes when hosting on my PC
 # Remove dotenv when deploy
 # from dotenv import load_dotenv
+from nextcord.ext import commands
 
 # load_dotenv()
 

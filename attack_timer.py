@@ -27,9 +27,9 @@ class Timer:
         self, name: str, callback, timeout: int = 28740, advance: int = 300
     ) -> None:
         self.name = name
-        self._timeout = timeout
+        self.timeout = timeout
         self._start = datetime.datetime.now()
-        self.finish = self._end_time(self._start, self._timeout)
+        self.finish = self._end_time(self._start, self.timeout)
         self._timecodes = [1, timeout - advance, advance]
         self.stage = 0
         self._callback = callback
@@ -63,7 +63,19 @@ class AttackTimer(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
         self.timers = dict()
-        self.channel = self.bot.get_channel(CHANNEL)
+
+    @commands.Cog.listener()
+    async def on_ready(self):
+        channel = self.bot.get_channel(943549056972632065)
+        await channel.send("checking for timers...")
+        old_timers = data.get_timer_set_time()
+        await channel.send("timers found")
+        await channel.send("setting up timers...")
+        for name, time in old_timers.items():
+            if time:
+                timer = Timer(name, self.notifications, timeout=time)
+                self.timers[name] = timer
+                await channel.send(f"set timer for {name} for {time} seconds")
 
     @nextcord.slash_command(
         name="gvg",
@@ -87,6 +99,7 @@ class AttackTimer(commands.Cog):
             await interaction.response.defer(
                 ephemeral=True, with_message=False
             )
+            data.write_timer_set_time(tribe, timer.timeout)
             await channel.send(data.msg.timer_new_msg().format(tribe))
         else:
             next_attack = self.timers[tribe].time_left()
@@ -111,15 +124,15 @@ class AttackTimer(commands.Cog):
             time_left = ":".join(str(timer.time_left()).split(":")[:2])
             await channel.send(f"{name}: {time_left}")
 
-    @commands.command(name="gvgreset")
-    @commands.has_any_role(SERVICE_ROLE, ADMIN_ROLE)
-    async def force_set_timer(self, ctx: commands.Context, *, text: str):
-        tribe, str_time = text.split(" == ")
-        hours, minutes = (int(numbers) for numbers in str_time.split(":"))
-        force_secs_left = (hours * 60 + minutes) * 60
-        self.timers[tribe].cancel()
-        timer = Timer(tribe, self.notifications, force_secs_left)
-        self.timers[tribe] = timer
+    # @commands.command(name="gvgreset")
+    # @commands.has_any_role(SERVICE_ROLE, ADMIN_ROLE)
+    # async def force_set_timer(self, ctx: commands.Context, *, text: str):
+    #     tribe, str_time = text.split(" == ")
+    #     hours, minutes = (int(numbers) for numbers in str_time.split(":"))
+    #     force_secs_left = (hours * 60 + minutes) * 60
+    #     self.timers[tribe].cancel()
+    #     timer = Timer(tribe, self.notifications, force_secs_left)
+    #     self.timers[tribe] = timer
 
     @nextcord.slash_command(
         name="change_timer",
@@ -140,12 +153,15 @@ class AttackTimer(commands.Cog):
         if tribe not in self.timers:
             timer = Timer(tribe, self.notifications)
             self.timers[tribe] = timer
+            obj = self.timers[tribe]
+            secs_left = obj.timeout
         else:
             hours, minutes = (int(numbers) for numbers in time.split(":"))
-            force_secs_left = (hours * 60 + minutes) * 60
+            secs_left = (hours * 60 + minutes) * 60
             self.timers[tribe].cancel()
-            timer = Timer(tribe, self.notifications, force_secs_left)
+            timer = Timer(tribe, self.notifications, secs_left)
             self.timers[tribe] = timer
+        data.write_timer_set_time(tribe, secs_left)
         await interaction.response.defer(ephemeral=True, with_message=False)
 
     async def notifications(self, timer: Timer) -> None:
