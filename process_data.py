@@ -24,7 +24,7 @@ def get_tribes_dict() -> Dict[str, str]:
     return res_dict
 
 
-# TRIBE_NAME_ID = get_tribes_dict()
+TRIBE_NAME_ID = get_tribes_dict()
 TRIBE_ORDER = ["tribe", "lvl", "rank", "members", "reactor", "fame", "power"]
 TRIBE_JSON_MAP = {
     "tribe": "name",
