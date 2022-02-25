@@ -169,11 +169,11 @@ class AttackTimer(commands.Cog):
         message = ALERTS[timer.stage]
         timedelta = timer.time_left()
         str_timedelta = ":".join(str(timedelta).split(":")[:2])
-        output = message.format(
-            MENTION[timer.name]["role"], timer.name, str_timedelta
-        )
+        output = message.format(timer.name, str_timedelta)
         await channel.send(output)
         if timer.stage == 2:
+            role = MENTION[timer.name]["role"]
+            await channel.send(f"<@&{role}>")
             await channel.send(data.get_vs(MENTION[timer.name]["slug"]))
             self.timers[timer.name].cancel()
             self.timers.pop(timer.name, None)
