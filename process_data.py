@@ -176,7 +176,7 @@ def update_db() -> None:
 
 def get_db_status() -> str:
     total = len(TRIBE_NAME_ID)
-    find_time = db.query_time()[1]
+    find_time = db.query_time()[0][1]
     print(find_time)
     upd_time = datetime.datetime.strptime(str(find_time), "%Y-%m-%d %H:%M:%S")
     time_now = datetime.datetime.now()
