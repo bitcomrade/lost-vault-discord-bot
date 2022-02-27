@@ -298,7 +298,7 @@ def prettify_compare(
         value_2: Any = data_2.get(row)
         str_1 = "| |"
         str_2 = "| |"
-        if type(value_1) == int:
+        if type(value_1) == int or type(value_1) == float:
             if (multi * value_1) > (multi * value_2):
                 str_1 = "|+|"
             elif (multi * value_1) < (multi * value_2):
