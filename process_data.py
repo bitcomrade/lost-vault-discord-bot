@@ -25,7 +25,17 @@ def get_tribes_dict() -> Dict[str, str]:
 
 
 TRIBE_NAME_ID = get_tribes_dict()
-TRIBE_ORDER = ["tribe", "lvl", "rank", "members", "reactor", "fame", "power"]
+TRIBE_ORDER = [
+    "tribe",
+    "lvl",
+    "rank",
+    "power",
+    "fame",
+    "members",
+    "reactor",
+    "xp",
+    "gold",
+]
 TRIBE_JSON_MAP = {
     "tribe": "name",
     "lvl": "level",
@@ -34,6 +44,8 @@ TRIBE_JSON_MAP = {
     "reactor": "reactor_level",
     "fame": "points",
     "power": "power",
+    "xp": "bonus_xp",
+    "gold": "bonus_gold",
 }
 PLAYER_ORDER = [
     "name",
@@ -217,9 +229,9 @@ def prettify_tribe(data: Dict[str, str | int]) -> str:
     """
     line_1 = f"```\nTRIBE: {data.get('tribe')}\n"
     stat_table = []
-    for value in range(1, 4):
+    for value in range(1, 5):
         label_1 = TRIBE_ORDER[value]
-        label_2 = TRIBE_ORDER[value + 3]
+        label_2 = TRIBE_ORDER[value + 4]
         stat_table.append(
             (
                 label_1.upper(),
