@@ -7,12 +7,30 @@ from nextcord.ext import commands
 
 import process_data as data
 
-GUILD_IDS = 395543532997181440
+GUILD_IDS = [395543532997181440, 906567855905062922]
 SERVICE_ROLE = "LV bot trustworthy"
 ADMIN_ROLE = "LV bot admin"
 MENTION = {
-    "Dakar": {"slug": "dakar", "role": 899556122564911124},
-    "Инфектед Машрум": {"slug": "guild-5", "role": 913869261389316106},
+    "Dakar": {
+        "slug": "dakar",
+        "role": 899556122564911124,
+        "channel": 943498537008762960,
+    },
+    "Инфектед Машрум": {
+        "slug": "guild-5",
+        "role": 913869261389316106,
+        "channel": 943498537008762960,
+    },
+    "Eclipse": {
+        "slug": "eclipse",
+        "role": 906577291566522428,
+        "channel": 0000,
+    },
+    "Eclipse Academy": {
+        "slug": "eclipse-academy",
+        "role": 906819171000647733,
+        "channel": 0000,
+    },
 }
 CHANNEL = 943498537008762960
 ALERTS = [
@@ -80,7 +98,7 @@ class AttackTimer(commands.Cog):
     @nextcord.slash_command(
         name="gvg",
         description="таймер для гвг / sets timer for gvg",
-        guild_ids=[GUILD_IDS],
+        guild_ids=GUILD_IDS,
     )
     async def set_timer(
         self,
@@ -89,10 +107,10 @@ class AttackTimer(commands.Cog):
             required=True,
             name="tribe",
             description="выберите племя / choose tribe",
-            choices=["Dakar", "Инфектед Машрум"],
+            choices=["Dakar", "Eclipse", "Инфектед Машрум", "Eclipse Academy"],
         ),
     ):
-        channel = self.bot.get_channel(CHANNEL)
+        channel = self.bot.get_channel(MENTION[tribe]["channel"])
         if tribe not in self.timers:
             timer = Timer(tribe, self.notifications)
             self.timers[tribe] = timer
@@ -114,41 +132,31 @@ class AttackTimer(commands.Cog):
     @nextcord.slash_command(
         name="timers",
         description="список активных таймеров / active timers list",
-        guild_ids=[GUILD_IDS],
+        guild_ids=GUILD_IDS,
     )
     async def timers_list(self, interaction: nextcord.Interaction):
-        channel = self.bot.get_channel(CHANNEL)
         await interaction.response.defer(ephemeral=True, with_message=False)
         for timer in self.timers.values():
             name = timer.name
             time_left = ":".join(str(timer.time_left()).split(":")[:2])
+            channel = self.bot.get_channel(MENTION[name]["channel"])
             await channel.send(f"{name}: {time_left}")
-
-    # @commands.command(name="gvgreset")
-    # @commands.has_any_role(SERVICE_ROLE, ADMIN_ROLE)
-    # async def force_set_timer(self, ctx: commands.Context, *, text: str):
-    #     tribe, str_time = text.split(" == ")
-    #     hours, minutes = (int(numbers) for numbers in str_time.split(":"))
-    #     force_secs_left = (hours * 60 + minutes) * 60
-    #     self.timers[tribe].cancel()
-    #     timer = Timer(tribe, self.notifications, force_secs_left)
-    #     self.timers[tribe] = timer
 
     @nextcord.slash_command(
         name="change_timer",
         description="изменить таймер для гвг / change timer for gvg",
-        guild_ids=[GUILD_IDS],
+        guild_ids=GUILD_IDS,
     )
     async def change_timer(
         self,
         interaction: nextcord.Interaction,
+        time: str,
         tribe: str = nextcord.SlashOption(
             required=True,
             name="tribe",
             description="выберите племя / choose tribe",
-            choices=["Dakar", "Инфектед Машрум"],
+            choices=["Dakar", "Eclipse", "Инфектед Машрум", "Eclipse Academy"],
         ),
-        time: str = "7:59",
     ):
         if tribe not in self.timers:
             timer = Timer(tribe, self.notifications)
@@ -165,7 +173,7 @@ class AttackTimer(commands.Cog):
         await interaction.response.defer(ephemeral=True, with_message=False)
 
     async def notifications(self, timer: Timer) -> None:
-        channel = self.bot.get_channel(CHANNEL)
+        channel = self.bot.get_channel(MENTION[timer.name]["channel"])
         message = ALERTS[timer.stage]
         timedelta = timer.time_left()
         str_timedelta = ":".join(str(timedelta).split(":")[:2])
