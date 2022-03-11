@@ -24,15 +24,14 @@ MENTION = {
     "Eclipse": {
         "slug": "eclipse",
         "role": 906577291566522428,
-        "channel": 0000,
+        "channel": 906584942555836467,
     },
     "Eclipse Academy": {
         "slug": "eclipse-academy",
         "role": 906819171000647733,
-        "channel": 0000,
+        "channel": 906584942555836467,
     },
 }
-CHANNEL = 943498537008762960
 ALERTS = [
     data.msg.timer_start_msg(),
     data.msg.timer_advance_msg(),
