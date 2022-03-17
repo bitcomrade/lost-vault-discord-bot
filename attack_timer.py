@@ -23,12 +23,12 @@ MENTION = {
     },
     "Eclipse": {
         "slug": "eclipse",
-        "role": 906577291566522428,
+        "role": 954013772404641804,
         "channel": 906584942555836467,
     },
     "Eclipse Academy": {
         "slug": "eclipse-academy",
-        "role": 906819171000647733,
+        "role": 954013915765936148,
         "channel": 906584942555836467,
     },
 }
@@ -121,9 +121,7 @@ class AttackTimer(commands.Cog):
         else:
             next_attack = self.timers[tribe].time_left()
             time_left = ":".join(str(next_attack).split(":")[:2])
-            await interaction.response.defer(
-                ephemeral=True, with_message=False
-            )
+            await interaction.response.send_message("👍")
             await channel.send(
                 data.msg.time_left_msg().format(tribe, time_left)
             )
@@ -134,7 +132,7 @@ class AttackTimer(commands.Cog):
         guild_ids=GUILD_IDS,
     )
     async def timers_list(self, interaction: nextcord.Interaction):
-        await interaction.response.defer(ephemeral=True, with_message=False)
+        await interaction.response.send_message("👍")
         for timer in self.timers.values():
             name = timer.name
             time_left = ":".join(str(timer.time_left()).split(":")[:2])
@@ -149,27 +147,27 @@ class AttackTimer(commands.Cog):
     async def change_timer(
         self,
         interaction: nextcord.Interaction,
-        time: str,
         tribe: str = nextcord.SlashOption(
             required=True,
             name="tribe",
             description="выберите племя / choose tribe",
             choices=["Dakar", "Eclipse", "Инфектед Машрум", "Eclipse Academy"],
         ),
+        time: str = "7:59",
     ):
+        hours, minutes = (int(numbers) for numbers in time.split(":"))
+        secs_left = (hours * 60 + minutes) * 60
         if tribe not in self.timers:
-            timer = Timer(tribe, self.notifications)
+            timer = Timer(tribe, self.notifications, secs_left)
             self.timers[tribe] = timer
             obj = self.timers[tribe]
             secs_left = obj.timeout
         else:
-            hours, minutes = (int(numbers) for numbers in time.split(":"))
-            secs_left = (hours * 60 + minutes) * 60
             self.timers[tribe].cancel()
             timer = Timer(tribe, self.notifications, secs_left)
             self.timers[tribe] = timer
         data.write_timer_set_time(tribe, secs_left)
-        await interaction.response.defer(ephemeral=True, with_message=False)
+        await interaction.response.send_message("👍")
 
     async def notifications(self, timer: Timer) -> None:
         channel = self.bot.get_channel(MENTION[timer.name]["channel"])
